@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.InquiryFileR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Tests", "RevenueControl.Tests\RevenueControl.Tests.csproj", "{DBED7C51-6918-4BD0-98C0-E89DDE9ECDC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Resources", "RevenueControl.Resources\RevenueControl.Resources.csproj", "{4703C16B-10FD-49BC-9D46-2F33EAACCF03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{DBED7C51-6918-4BD0-98C0-E89DDE9ECDC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBED7C51-6918-4BD0-98C0-E89DDE9ECDC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBED7C51-6918-4BD0-98C0-E89DDE9ECDC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4703C16B-10FD-49BC-9D46-2F33EAACCF03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4703C16B-10FD-49BC-9D46-2F33EAACCF03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4703C16B-10FD-49BC-9D46-2F33EAACCF03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4703C16B-10FD-49BC-9D46-2F33EAACCF03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

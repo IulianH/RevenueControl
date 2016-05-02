@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RevenueControl.InquiryFileReaders.Ing;
 using RevenueControl.DomainObjects.Entities;
+using System.Linq;
 
 namespace RevenueControl.Tests.FileReaderTests
 {
@@ -61,7 +62,7 @@ namespace RevenueControl.Tests.FileReaderTests
         #endregion
 
         [TestMethod]
-        public void TestMethod1()
+        public void IngFileReaderTestMethod1()
         {
             //
             // TODO: Add test logic here
@@ -71,6 +72,34 @@ namespace RevenueControl.Tests.FileReaderTests
             IngFileReader reader = new IngFileReader();
 
             IList<Transaction> transactions = reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new System.Globalization.CultureInfo("en-US"));
+            Transaction firstTransaction = transactions[0];
+            Assert.IsTrue(firstTransaction.TransactionDate == new DateTime(2016, 4, 1) && firstTransaction.TransactionType == TransactionType.Debit && firstTransaction.TransactionDetails == "Foreign exchange Home'Bank" &&
+                firstTransaction.Amount == 693.17M);
+            Transaction lastTransaction = transactions[transactions.Count - 1];
+            Assert.IsTrue(lastTransaction.TransactionDate == new DateTime(2016, 2, 4) && lastTransaction.TransactionType == TransactionType.Credit && lastTransaction.TransactionDetails == "Incoming funds" && lastTransaction.Amount == 2500m);
+        }
+
+        [TestMethod]
+        public void IngFileReaderTestMethod2()
+        {
+            const string resourceFile = "Tranzactii_pe_perioada.csv";
+            IngFileReader reader = new IngFileReader();
+
+            IList<Transaction> transactions = reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new System.Globalization.CultureInfo("ro-RO"));
+            Assert.IsTrue(transactions.Count == 3);
+            Transaction lastTransaction = transactions[transactions.Count - 1];
+            Assert.IsTrue(lastTransaction.TransactionDate == new DateTime(2016, 4, 29) && lastTransaction.TransactionType == TransactionType.Debit && lastTransaction.TransactionDetails == "Cumparare POS" && lastTransaction.Amount == 13.9m);
+        }
+
+        [TestMethod]
+        public void IngFileReaderTestMethod3()
+        {
+            const string resourceFile = "Tranzactii_pe_perioada.csv";
+            IngFileReader reader = new IngFileReader();
+
+            IList<Transaction> transactions = reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new System.Globalization.CultureInfo("ro-RO"));
+            decimal totalDebits = transactions.Where(t => t.TransactionType == TransactionType.Debit).Sum(t => t.Amount);
+            Assert.IsTrue(totalDebits == 257.57m);
         }
     }
 }

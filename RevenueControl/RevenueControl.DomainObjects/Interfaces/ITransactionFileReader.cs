@@ -10,8 +10,6 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface ITransactionFileReader
     {
-        bool Success { get; }
-
         IList<Transaction> Read(string fileName, CultureInfo culture);
 
         IList<Transaction> Read(string fileName, Period period, CultureInfo culture);
