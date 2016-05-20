@@ -16,6 +16,14 @@ namespace RevenueControl.InquiryFileReaders.Ing
 {
     public class IngFileReader : ITransactionFileReader
     {
+        class TransactionDetailsComparer : IComparer<string>
+        {
+            public int Compare(string x, string y)
+            {
+                return String.Compare(x, y, CultureInfo.InvariantCulture, CompareOptions.Ordinal);
+            }
+        }
+
         public IList<Transaction> Read(string fileName, CultureInfo culture)
         {
             return Read(fileName, GlobalConstants.MaxPeriod, culture);
@@ -23,13 +31,13 @@ namespace RevenueControl.InquiryFileReaders.Ing
 
         Transaction GetTransactionFromLines(List<IngFileLine> lines, CultureInfo culture)
         {
-
+            
             Transaction returnValue = null;
             //validation
             if (lines.Any(line => line.Date != string.Empty) && lines.All(line => line.TransactionDetails != string.Empty)
             && lines.Count(line => line.Date != string.Empty && (line.DebitValue != string.Empty || line.CreditValue != string.Empty)) == 1)
             {
-                IngFileLine mainLine = lines.Single(ln => ln.Date != string.Empty);
+                IngFileLine mainLine = lines[0];
                 if (mainLine.DebitValue != string.Empty || mainLine.CreditValue != string.Empty && !(mainLine.DebitValue != string.Empty && mainLine.CreditValue != string.Empty))
                 {
                     DateTime transactionDate;
@@ -38,12 +46,14 @@ namespace RevenueControl.InquiryFileReaders.Ing
                     string amountStr = transactionType == TransactionType.Debit ? mainLine.DebitValue : mainLine.CreditValue;
                     if (DateTime.TryParse(mainLine.Date, culture, DateTimeStyles.None, out transactionDate) && decimal.TryParse(amountStr,NumberStyles.Currency, culture, out amount))
                     {
+                        
                         if(amount > 0m)
                         {
+                            Func<string[], string[]> sort = s1 => { Array.Sort(s1, new TransactionDetailsComparer()); return s1; };
                             returnValue = new Transaction
                             {
                                 Amount = amount,
-                                OtherDetails = string.Join(" ", lines.Where(ln => ln != mainLine).Select(ln => ln.TransactionDetails)),
+                                OtherDetails = string.Join(" ", sort(lines.Where(ln => ln != mainLine).Select(ln => ln.TransactionDetails).ToArray())),
                                 TransactionDate = transactionDate,
                                 TransactionDetails = mainLine.TransactionDetails,
                                 TransactionType = transactionType
@@ -58,10 +68,10 @@ namespace RevenueControl.InquiryFileReaders.Ing
         HybridDictionary CreateColumnMaps(CsvReader reader, CultureInfo culture)
         {
             HybridDictionary returnValue = new HybridDictionary();
-            string date = Localization.GetResource("Date", culture);
-            string transactionDetails = Localization.GetResource("TransactionDetails", culture);
-            string debit = Localization.GetResource("Debit", culture);
-            string credit = Localization.GetResource("Credit", culture);
+            string date = Localization.GetDate(culture);
+            string transactionDetails = Localization.GetTransactionDetails(culture);
+            string debit = Localization.GetDebit(culture);
+            string credit = Localization.GetCredit(culture);
             string[] headers = reader.FieldHeaders;
             for (int i = 0; i < headers.Length; i++)
             {

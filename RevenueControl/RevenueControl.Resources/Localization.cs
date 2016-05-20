@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace RevenueControl.Resources
 {
@@ -31,5 +31,72 @@ namespace RevenueControl.Resources
             }
             return returnValue; 
         }
+
+        public static CultureInfo CurrentCulture
+        {
+            get
+            {
+                return Thread.CurrentThread.CurrentUICulture;
+            }
+            set
+            {
+                Thread.CurrentThread.CurrentUICulture = value;
+            }
+        }
+
+
+        public static string GetDate(CultureInfo culture)
+        {
+            return GetResource("Date", culture);
+        }
+
+        public static string Date
+        {
+            get
+            {
+                return GetDate(CurrentCulture);
+            }
+        }
+
+        public static string GetTransactionDetails(CultureInfo culture)
+        {
+            return GetResource("TransactionDetails", culture);
+        }
+
+
+        public static string TransactionDetails
+        {
+            get
+            {
+                return GetTransactionDetails(CurrentCulture);
+            }
+        }
+
+        public static string GetDebit(CultureInfo culture)
+        {
+            return GetResource("Debit", culture);
+        }
+
+        public static string Debit
+        {
+            get
+            {
+                return GetDebit(CurrentCulture);
+            }
+        }
+
+        public static string GetCredit(CultureInfo culture)
+        {
+            return GetResource("Credit", culture);
+        }
+
+        public static string Credit
+        {
+            get
+            {
+                return GetCredit(CurrentCulture);
+            }
+        }
+
     }
 }
