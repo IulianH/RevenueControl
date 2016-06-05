@@ -45,8 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bank.cs" />
-    <Compile Include="Ing\IngFileReader.cs" />
-    <Compile Include="Ing\IngFileLine.cs" />
+    <Compile Include="Csv\GenericCsvReader.cs" />
+    <Compile Include="Csv\Ing\IngCsvFileReader.cs" />
+    <Compile Include="Csv\CsvFileLine.cs" />
+    <Compile Include="Csv\TransactionDetailsComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

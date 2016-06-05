@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace RevenueControl.InquiryFileReaders.Ing
+namespace RevenueControl.InquiryFileReaders.Csv
 {
   
-    public class IngFileLine 
+    public class CsvFileLine 
     {
         public string Date { get; set; }
 
