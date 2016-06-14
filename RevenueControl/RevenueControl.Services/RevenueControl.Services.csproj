@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8E793A94-FB7D-4F07-9D2F-B243D48637E1}</ProjectGuid>
+    <ProjectGuid>{D7453F7E-DDC6-4300-B999-0136505CFF36}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RevenueControl.DomainObjects</RootNamespace>
-    <AssemblyName>RevenueControl.DomainObjects</AssemblyName>
+    <RootNamespace>RevenueControl.Services</RootNamespace>
+    <AssemblyName>RevenueControl.Services</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,19 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Client.cs" />
-    <Compile Include="Entities\DataSource.cs" />
-    <Compile Include="Entities\Period.cs" />
-    <Compile Include="Entities\Transaction.cs" />
-    <Compile Include="Exceptions\InvalidTransactionException.cs" />
-    <Compile Include="GlobalConstants.cs" />
-    <Compile Include="Interfaces\IDataSourceRepository.cs" />
-    <Compile Include="Interfaces\ITransactionManager.cs" />
-    <Compile Include="Interfaces\ITransactionFileReader.cs" />
-    <Compile Include="Interfaces\ITransactionRepository.cs" />
+    <Compile Include="TransactionsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\RevenueControl.DomainObjects\RevenueControl.DomainObjects.csproj">
+      <Project>{8e793a94-fb7d-4f07-9d2f-b243d48637e1}</Project>
+      <Name>RevenueControl.DomainObjects</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

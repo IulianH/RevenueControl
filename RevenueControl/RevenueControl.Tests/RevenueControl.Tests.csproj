@@ -59,6 +59,7 @@
     <Compile Include="FileReaderTests\CsvReaderTests.cs" />
     <Compile Include="GlobalSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServicesTests\TransactionManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -77,6 +78,10 @@
     <ProjectReference Include="..\RevenueControl.InquiryFileReaders\RevenueControl.InquiryFileReaders.csproj">
       <Project>{bdac342b-97d7-4de3-baf4-e9741b1a2d15}</Project>
       <Name>RevenueControl.InquiryFileReaders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RevenueControl.Services\RevenueControl.Services.csproj">
+      <Project>{d7453f7e-ddc6-4300-b999-0136505cff36}</Project>
+      <Name>RevenueControl.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

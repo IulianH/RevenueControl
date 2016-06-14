@@ -27,8 +27,6 @@ namespace RevenueControl.DomainObjects.Entities
 
         public string OtherDetails { get; set; }
 
-        
-
         private bool Equals(Transaction other)
         {
             return TransactionDate == other.TransactionDate && TransactionDetails == other.TransactionDetails && Amount == other.Amount && TransactionType == other.TransactionType && OtherDetails == other.OtherDetails;
@@ -52,15 +50,21 @@ namespace RevenueControl.DomainObjects.Entities
 
         public override bool Equals(object obj)
         {
-            // If parameter cannot be cast to ThreeDPoint return false:
+
+            if(obj == null)
+            {
+                return false; 
+            }
+
+            // If parameter cannot be cast to Point return false.
             Transaction p = obj as Transaction;
-            if ((object)p == null)
+            if ((System.Object)p == null)
             {
                 return false;
             }
 
             // Return true if the fields match:
-            return base.Equals(obj) && Equals(p);
+            return Equals(p);
         }
 
         public static bool operator !=(Transaction a, Transaction b)
@@ -68,14 +72,10 @@ namespace RevenueControl.DomainObjects.Entities
             return !(a == b);
         }
 
-        private int _hash = int.MinValue;
+   
         public override int GetHashCode()
         {
-            if(_hash == int.MinValue)
-            {
-                _hash = string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}{4}", this.TransactionDate.Year, TransactionDate.Month, TransactionDate.Day, TransactionDetails, Amount).GetHashCode();
-            }
-            return _hash;
+            return string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}{4}", this.TransactionDate.Year, TransactionDate.Month, TransactionDate.Day, TransactionDetails, Amount).GetHashCode();
         }
     }
 }
