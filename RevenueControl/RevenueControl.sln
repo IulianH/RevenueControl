@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Resources", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Services", "RevenueControl.Services\RevenueControl.Services.csproj", "{D7453F7E-DDC6-4300-B999-0136505CFF36}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Web", "RevenueControl.Web\RevenueControl.Web.csproj", "{CD7E08F1-85F9-4237-9EF9-916D16719698}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Web.Tests", "RevenueControl.Web.Tests\RevenueControl.Web.Tests.csproj", "{FE14EFF8-1731-4E23-820A-1FC01AC2BC78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{D7453F7E-DDC6-4300-B999-0136505CFF36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7453F7E-DDC6-4300-B999-0136505CFF36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7453F7E-DDC6-4300-B999-0136505CFF36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD7E08F1-85F9-4237-9EF9-916D16719698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD7E08F1-85F9-4237-9EF9-916D16719698}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD7E08F1-85F9-4237-9EF9-916D16719698}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD7E08F1-85F9-4237-9EF9-916D16719698}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE14EFF8-1731-4E23-820A-1FC01AC2BC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE14EFF8-1731-4E23-820A-1FC01AC2BC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE14EFF8-1731-4E23-820A-1FC01AC2BC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE14EFF8-1731-4E23-820A-1FC01AC2BC78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

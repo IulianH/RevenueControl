@@ -56,6 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DomainObjectsTests\TransactionTests.cs" />
     <Compile Include="FileReaderTests\CsvReaderTests.cs" />
     <Compile Include="GlobalSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
