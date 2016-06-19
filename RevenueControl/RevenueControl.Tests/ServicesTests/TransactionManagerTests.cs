@@ -6,6 +6,7 @@ using RevenueControl.DomainObjects.Entities;
 using RevenueControl.InquiryFileReaders.Csv;
 using System.Collections.Generic;
 using RevenueControl.Services;
+using RevenueControl.DomainObjects;
 
 namespace RevenueControl.Tests.ServicesTests
 {
@@ -28,10 +29,10 @@ namespace RevenueControl.Tests.ServicesTests
             TransactionsManager transactionManager = new TransactionsManager(moq.Object, new GenericCsvReader(), new Client { ClientId = 1 }, new System.Globalization.CultureInfo("en-US"));
 
             // Act
-            int count = transactionManager.AddTransactionsToDataSource(dataSource, GlobalSettings.GetResourceFilePath(resourceFile));
+            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(dataSource, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
-            Assert.IsTrue(count == 0);
+            Assert.IsTrue(response.Result == 0);
         }
 
         [TestMethod]
@@ -50,10 +51,10 @@ namespace RevenueControl.Tests.ServicesTests
             TransactionsManager transactionManager = new TransactionsManager(moq.Object, new GenericCsvReader(), new Client { ClientId = 1 }, new System.Globalization.CultureInfo("en-US"));
 
             // Act
-            int count = transactionManager.AddTransactionsToDataSource(dataSource, GlobalSettings.GetResourceFilePath(resourceFile));
+            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(dataSource, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
-            Assert.IsTrue(count == transactions.Count);
+            Assert.IsTrue(response.Result == transactions.Count);
         }
     }
 }

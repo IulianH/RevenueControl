@@ -12,14 +12,8 @@ namespace RevenueControl.DomainObjects.Entities
 
         public string Name { get; set; }
 
-        public virtual IList<Transaction> Transactions { get; set; }
+        public int Id { get; set; }
 
-        public int DataSourceId { get; set; }
-
-        public IEnumerable<string> Cards { get; set; }
-
-        public string BankName { get; set; }
-
-        public string FileReaderId { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

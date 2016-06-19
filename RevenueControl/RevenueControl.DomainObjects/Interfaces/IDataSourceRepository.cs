@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RevenueControl.DomainObjects.Interfaces
 {
-    public interface IDataSourceRepository
+    public interface IDataSourceRepository : IDisposable
     {
 
     }

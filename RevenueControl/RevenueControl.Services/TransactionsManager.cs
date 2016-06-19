@@ -61,7 +61,7 @@ namespace RevenueControl.Services
             }
         }
 
-        public int AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period)
+        public ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period)
         {
             IList<Transaction> transactionsFromFile;
             if (period == GlobalConstants.MaxPeriod)
@@ -88,10 +88,13 @@ namespace RevenueControl.Services
 
             transactionRepository.AddTransactionsToDataSource(dataSource, transactionsFromFile.Where((transaction, index) => !indexesToRemove.Contains(index)));
 
-            return transactionsFromFile.Count - indexesToRemove.Count;
+            return new ActionResponse<int>
+            {
+                Result = transactionsFromFile.Count - indexesToRemove.Count
+            };
         }
 
-        public int AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile)
+        public ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile)
         {
             return AddTransactionsToDataSource(dataSource, transactionReportFile, GlobalConstants.MaxPeriod);
         }
