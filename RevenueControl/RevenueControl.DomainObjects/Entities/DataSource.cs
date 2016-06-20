@@ -14,6 +14,8 @@ namespace RevenueControl.DomainObjects.Entities
 
         public int Id { get; set; }
 
+        public int ClientId { get; set; }
+
         public ICollection<Transaction> Transactions { get; set; }
     }
 }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RevenueControl.DomainObjects.Entities
+namespace RevenueControl.DomainObjects.Interfaces
 {
-    public class Client
+    public interface IClientRepository : IDisposable
     {
-        public int Id { get; set; }
+
     }
 }

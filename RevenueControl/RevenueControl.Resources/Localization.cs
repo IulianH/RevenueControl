@@ -12,16 +12,17 @@ namespace RevenueControl.Resources
     public static class Localization
     {
         static ResourceManager resourceManager;
-        static readonly string defaaultCulture = "en-US";
+        static readonly string defaultCulture = "en-US";
+       
+
         static Localization()
         {
             resourceManager = new ResourceManager("RevenueControl.Resources.Resources", Assembly.GetExecutingAssembly());
         }
         public static string GetResource(string key, CultureInfo culture)
         {
-            
             string returnValue;
-            if (culture.ToString() != defaaultCulture)
+            if (culture.ToString() != defaultCulture)
             {
                 returnValue = (string)resourceManager.GetObject(key, culture);
             }
@@ -98,5 +99,9 @@ namespace RevenueControl.Resources
             }
         }
 
+        public static string GetZeroTransactionsInFile(CultureInfo culture)
+        {
+            return GetResource("ZeroTransactionsInFile", culture);
+        }
     }
 }

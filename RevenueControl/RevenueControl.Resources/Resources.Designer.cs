@@ -95,5 +95,14 @@ namespace RevenueControl.Resources {
                 return ResourceManager.GetString("TransactionDetails", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file doesn&apos;t contain any transaction.
+        /// </summary>
+        internal static string ZeroTransactionsInFile {
+            get {
+                return ResourceManager.GetString("ZeroTransactionsInFile", resourceCulture);
+            }
+        }
     }
 }

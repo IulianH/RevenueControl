@@ -129,4 +129,7 @@
   <data name="TransactionDetails" xml:space="preserve">
     <value>Transaction Details</value>
   </data>
+  <data name="ZeroTransactionsInFile" xml:space="preserve">
+    <value>The file doesn't contain any transaction</value>
+  </data>
 </root>

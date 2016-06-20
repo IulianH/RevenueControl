@@ -48,6 +48,10 @@
       <Project>{8e793a94-fb7d-4f07-9d2f-b243d48637e1}</Project>
       <Name>RevenueControl.DomainObjects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RevenueControl.Resources\RevenueControl.Resources.csproj">
+      <Project>{4703C16B-10FD-49BC-9D46-2F33EAACCF03}</Project>
+      <Name>RevenueControl.Resources</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

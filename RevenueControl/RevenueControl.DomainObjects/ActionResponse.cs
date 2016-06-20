@@ -5,7 +5,7 @@ namespace RevenueControl.DomainObjects
     public enum ActionResponseCode
     {
         Success,
-        OkWithWarning,
+        NoActionPerformed,
         InvalidInput,
         AlreadyExists
     }

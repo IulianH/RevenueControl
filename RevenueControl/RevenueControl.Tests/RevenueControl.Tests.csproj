@@ -70,6 +70,9 @@
     <None Include="Resources\Tranzactii_pe_perioada.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Tranzactii_pe_perioada_empty.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RevenueControl.DomainObjects\RevenueControl.DomainObjects.csproj">
@@ -79,6 +82,10 @@
     <ProjectReference Include="..\RevenueControl.InquiryFileReaders\RevenueControl.InquiryFileReaders.csproj">
       <Project>{bdac342b-97d7-4de3-baf4-e9741b1a2d15}</Project>
       <Name>RevenueControl.InquiryFileReaders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RevenueControl.Resources\RevenueControl.Resources.csproj">
+      <Project>{4703C16B-10FD-49BC-9D46-2F33EAACCF03}</Project>
+      <Name>RevenueControl.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\RevenueControl.Services\RevenueControl.Services.csproj">
       <Project>{d7453f7e-ddc6-4300-b999-0136505cff36}</Project>

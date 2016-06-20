@@ -46,6 +46,7 @@
     <Compile Include="Entities\Transaction.cs" />
     <Compile Include="Exceptions\InvalidTransactionException.cs" />
     <Compile Include="GlobalConstants.cs" />
+    <Compile Include="Interfaces\IClientRepository.cs" />
     <Compile Include="Interfaces\IDataSourceManager.cs" />
     <Compile Include="Interfaces\IDataSourceRepository.cs" />
     <Compile Include="Interfaces\ITransactionManager.cs" />
