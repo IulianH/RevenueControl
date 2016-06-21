@@ -29,7 +29,11 @@ namespace RevenueControl.DomainObjects.Entities
 
         private bool Equals(Transaction other)
         {
-            return TransactionDate == other.TransactionDate && TransactionDetails == other.TransactionDetails && Amount == other.Amount && TransactionType == other.TransactionType && OtherDetails == other.OtherDetails;
+            return TransactionDate == other.TransactionDate 
+                && (TransactionDetails ?? string.Empty) == (other.TransactionDetails ?? string.Empty) 
+                && Amount == other.Amount 
+                && TransactionType == other.TransactionType 
+                && (OtherDetails ?? string.Empty) == (other.OtherDetails ?? string.Empty);
         }
 
         public static bool operator ==(Transaction a, Transaction b)
