@@ -42,7 +42,10 @@ namespace RevenueControl.Tests.ServicesTests
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
+            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(dataSourceId), Times.AtLeastOnce);
             Assert.IsTrue(response.Result == 0);
+            Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
 
         [TestMethod]
@@ -71,6 +74,9 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             Assert.IsTrue(response.Result == transactions.Count);
+            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(dataSourceId), Times.AtLeastOnce);
+            Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
 
         [TestMethod]
@@ -100,6 +106,7 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.NoActionPerformed);
             Assert.IsTrue(response.ActionResponseMessage == Localization.GetZeroTransactionsInFile(culture));
+            moqDsRepo.Verify(inst => inst.GetById(dataSourceId), Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -128,6 +135,7 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.InvalidInput);
+            moqDsRepo.Verify(inst => inst.GetById(dataSourceId), Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -193,6 +201,9 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Result == 1);
             Assert.IsTrue(passedToRepository.Single() == toAdd[1]);
+            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(dataSourceId), Times.AtLeastOnce);
+            Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
     }
 }

@@ -234,7 +234,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -282,6 +284,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RevenueControl.DataAccess\RevenueControl.DataAccess.csproj">
+      <Project>{640c7584-35e0-4952-88d3-134fabadcaac}</Project>
+      <Name>RevenueControl.DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RevenueControl.DomainObjects\RevenueControl.DomainObjects.csproj">
       <Project>{8e793a94-fb7d-4f07-9d2f-b243d48637e1}</Project>
       <Name>RevenueControl.DomainObjects</Name>

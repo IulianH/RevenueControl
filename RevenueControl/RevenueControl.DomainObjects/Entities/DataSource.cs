@@ -8,11 +8,12 @@ namespace RevenueControl.DomainObjects.Entities
 { 
     public class DataSource
     {
+
+        public int Id { get; set; }
+
         public string BankAccount { get; set; }
 
         public string Name { get; set; }
-
-        public int Id { get; set; }
 
         public int ClientId { get; set; }
 

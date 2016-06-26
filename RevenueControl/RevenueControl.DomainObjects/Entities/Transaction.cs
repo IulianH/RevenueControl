@@ -15,7 +15,7 @@ namespace RevenueControl.DomainObjects.Entities
 
     public class Transaction 
     {
-        public DataSource DataSource { get; set; }
+        public int Id { get; set; }
 
         public DateTime TransactionDate { get; set; }
 
@@ -26,6 +26,8 @@ namespace RevenueControl.DomainObjects.Entities
         public TransactionType TransactionType { get; set; }
 
         public string OtherDetails { get; set; }
+
+        public int DataSourceId { get; set; }
 
         private bool Equals(Transaction other)
         {

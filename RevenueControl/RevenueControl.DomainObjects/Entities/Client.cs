@@ -9,5 +9,7 @@ namespace RevenueControl.DomainObjects.Entities
     public class Client
     {
         public int Id { get; set; }
+        public string Name { get; set; }
+        public ICollection<DataSource> DataSources { get; set; }
     }
 }

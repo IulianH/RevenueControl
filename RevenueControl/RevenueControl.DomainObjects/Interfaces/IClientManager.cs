@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace RevenueControl.DomainObjects.Interfaces
 {
-    public interface IDataSourceRepository : IDisposable
+    public interface IClientManager : IDisposable
     {
-        DataSource GetById(int dataSourceId);
-
-        IEnumerable<DataSource> GetClientDataSources(Client client);
-
-
+        ActionResponse<Client> Client { get; }
     }
-
 }

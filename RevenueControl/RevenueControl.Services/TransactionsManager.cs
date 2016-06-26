@@ -46,7 +46,7 @@ namespace RevenueControl.Services
                 {
                     throw new InvalidTransactionException();
                 }
-                tr.DataSource = dataSource;
+                tr.DataSourceId = dataSource.Id;
             }
         }
 
@@ -93,6 +93,7 @@ namespace RevenueControl.Services
                     }
                     transactionRepository.AddTransactionsToDataSource(repoDataSource, transactionsFromFile.Where((transaction, index) => !indexesToRemove.Contains(index)));
                     ret.Result = transactionsFromFile.Count - indexesToRemove.Count;
+                    ret.Status = ActionResponseCode.Success;
                 }
                 else
                 {

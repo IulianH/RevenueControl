@@ -9,7 +9,6 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface ITransactionManager : IDisposable
     {
-    
         ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile);
 
         ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period);

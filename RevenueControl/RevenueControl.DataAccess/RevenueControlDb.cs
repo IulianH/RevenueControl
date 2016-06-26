@@ -10,6 +10,12 @@ namespace RevenueControl.DataAccess
 {
     public class RevenueControlDb : DbContext
     {
+        public RevenueControlDb() : base("name=DefaultConnection")
+        {
+
+        }
+        public DbSet<Client> Clients { get; set; }
+
         public DbSet<DataSource> DataSources { get; set; }
 
         public DbSet<Transaction> Transactions { get; set; }
