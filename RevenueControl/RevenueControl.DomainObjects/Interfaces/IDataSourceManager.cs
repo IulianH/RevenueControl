@@ -11,6 +11,6 @@ namespace RevenueControl.DomainObjects.Interfaces
     {
         ActionResponse<DataSource> CreateDataSource(DataSource dataSource);
 
-        ActionResponse<DataSource> GetDataSources();
+        ActionResponse<DataSource> GetClientDataSources(Client client);
     }
 }

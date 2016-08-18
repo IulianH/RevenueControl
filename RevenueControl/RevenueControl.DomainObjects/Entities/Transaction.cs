@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RevenueControl.DomainObjects.Entities
 {
-    public enum TransactionType
+    public enum TransactionType : byte
     {
         Debit = 0,
         Credit

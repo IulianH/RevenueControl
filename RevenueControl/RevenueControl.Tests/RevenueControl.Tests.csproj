@@ -63,6 +63,7 @@
     <Compile Include="ServicesTests\TransactionManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Resources\Inquiry_statements.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

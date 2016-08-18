@@ -24,7 +24,7 @@ namespace RevenueControl.Services
                 toReturn.Result = new Client();
                 Client dbClient = _clientRepo.Clients.Single(c => c.Name == "DefaultClient");
                 toReturn.Status = ActionResponseCode.Success;
-                toReturn.Result.Id = dbClient.Id;
+                toReturn.Result.Name = dbClient.Name;
                 return toReturn;
             }
         }

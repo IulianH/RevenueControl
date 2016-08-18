@@ -8,7 +8,8 @@ namespace RevenueControl.DomainObjects
         Success,
         NoActionPerformed,
         InvalidInput,
-        AlreadyExists
+        AlreadyExists,
+        NotFound
     }
 
     public class ActionResponse<T>

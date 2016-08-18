@@ -12,12 +12,10 @@ namespace RevenueControl.Services
     public class DataSourceManager : IDataSourceManager
     {
         IDataSourceRepository _dsRepo;
-        Client _client;
 
-        public DataSourceManager(IDataSourceRepository dsRepo, Client client)
+        public DataSourceManager(IDataSourceRepository dsRepo)
         {
             _dsRepo = dsRepo;
-            _client = client; 
         }
 
         public ActionResponse<DataSource> CreateDataSource(DataSource dataSource)
@@ -30,15 +28,20 @@ namespace RevenueControl.Services
             _dsRepo.Dispose();
         }
 
-        public ActionResponse<DataSource> GetDataSources()
+        public ActionResponse<DataSource> GetClientDataSources(Client client)
         {
-            ICollection<DataSource> toReturn = _dsRepo.GetClientDataSources(_client).ToList();
+            ICollection<DataSource> toReturn = _dsRepo.GetClientDataSources(client).ToList();
             return new ActionResponse<DataSource>
             {
                 ResultList = toReturn,
                 Status = ActionResponseCode.Success
             };
 
+        }
+
+        public ActionResponse<DataSource> GetDataSources(Client client)
+        {
+            throw new NotImplementedException();
         }
     }
 }

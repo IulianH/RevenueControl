@@ -15,6 +15,5 @@ namespace RevenueControl.DomainObjects.Interfaces
 
         void AddTransactionsToDataSource(DataSource dataSource, IEnumerable<Transaction> transactions);
 
-        IEnumerable<Transaction> Search(DataSource dataSource, Transaction patternTransaction, Period period);
     }
 }

@@ -17,19 +17,15 @@ namespace RevenueControl.Services
         private IDataSourceRepository dataSourceRepository;
         private ITransactionRepository transactionRepository;
         private ITransactionFileReader fileReader;
-        private Client client;
 
-        CultureInfo culture;
 
         public TransactionsManager(IDataSourceRepository dataSourceRepository, 
             ITransactionRepository transactionRepository, 
-            ITransactionFileReader fileReader, Client client, CultureInfo culture)
+            ITransactionFileReader fileReader)
         {
             this.dataSourceRepository = dataSourceRepository;
             this.transactionRepository = transactionRepository;
             this.fileReader = fileReader;
-            this.client = client;
-            this.culture = culture;
         }
 
         private void ValidateTransactionList(IList<Transaction> transactions, DataSource dataSource)
@@ -50,25 +46,20 @@ namespace RevenueControl.Services
             }
         }
 
-        private DataSource ValidateRequest(DataSource dataSource)
+        private DataSource GetDataSource(DataSource dataSource)
         {
-            DataSource dbDataSource = dataSourceRepository.GetById(dataSource.Id);
-            if(dbDataSource != null)
-            {
-                if(dbDataSource.ClientId != client.Id)
-                {
-                    dbDataSource = null;
-                }
-            }
-            return dbDataSource;
+            return dataSourceRepository.GetDataSource(dataSource);
         }
+
 
         public ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period)
         {
             ActionResponse<int> ret = new ActionResponse<int>();
-            DataSource repoDataSource = ValidateRequest(dataSource);
+            DataSource repoDataSource = GetDataSource(dataSource);
+
             if (repoDataSource != null)
             {
+                CultureInfo culture = new CultureInfo(repoDataSource.Culture);
                 IList<Transaction> transactionsFromFile;
                 if (period == GlobalConstants.MaxPeriod)
                 {
@@ -104,7 +95,7 @@ namespace RevenueControl.Services
             else
             {
                 ret.Result = -1;
-                ret.Status = ActionResponseCode.InvalidInput;
+                ret.Status = ActionResponseCode.NotFound;
             }
             return ret;
         }

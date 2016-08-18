@@ -16,14 +16,14 @@ namespace RevenueControl.DataAccess
             _db.Dispose();
         }
 
-        public DataSource GetById(int dataSourceId)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<DataSource> GetClientDataSources(Client client)
         {
-            return _db.DataSources.Where(ds => ds.ClientId == client.Id);
+            return _db.DataSources.Where(ds => ds.ClientName == client.Name);
+        }
+
+        public DataSource GetDataSource(DataSource dataSource)
+        {
+            return _db.DataSources.Where(ds => ds.ClientName == dataSource.ClientName && ds.Id == dataSource.Id).SingleOrDefault();
         }
     }
 }
