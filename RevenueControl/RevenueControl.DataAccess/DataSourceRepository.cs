@@ -26,7 +26,7 @@ namespace RevenueControl.DataAccess
             else
             {
                 string toSearch = searchTerm.Trim();
-                returnValue = _db.DataSources.Where(ds => ds.ClientName == client.Name && ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)));
+                returnValue = _db.DataSources.Where(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch))));
             }
             return returnValue;
         }

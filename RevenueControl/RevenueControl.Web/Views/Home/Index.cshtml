@@ -2,11 +2,23 @@
 @{
     ViewBag.Title = "Home Page";
 }
-@foreach(var item in Model)
+<form method="get">
+    <input type="search" name="searchTerm" />
+    <input type="submit" value="Search By Name" />
+</form>
+@foreach (var item in Model)
 {
+    var itemName = string.Empty;
+    if (!string.IsNullOrWhiteSpace(item.Name))
+    {
+        itemName = item.Name + " - " + item.BankAccount;
+    }
+    else
+    {
+        itemName = item.BankAccount;
+    }
     <div>
-        <h4>@item.Name</h4>
-        <div>@item.BankAccount</div>
+        <h4>@itemName</h4>
         <hr />
     </div>
 }   

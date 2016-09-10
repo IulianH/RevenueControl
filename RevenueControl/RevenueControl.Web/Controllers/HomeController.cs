@@ -14,9 +14,9 @@ namespace RevenueControl.Web.Controllers
     {
 
         IDataSourceManager _repo = new DataSourceManager(new DataSourceRepository());
-        public ActionResult Index()
+        public ActionResult Index(string searchTerm = null)
         {
-            var model = _repo.GetClientDataSources(new ClientManager(new ClientRepository()).SearchForClient("DefaultClient").Result).ResultList;
+            var model = _repo.GetClientDataSources(new ClientManager(new ClientRepository()).SearchForClient("DefaultClient").Result, searchTerm).ResultList;
 
             return View(model);
         }
