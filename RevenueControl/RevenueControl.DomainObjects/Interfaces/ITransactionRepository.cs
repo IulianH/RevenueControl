@@ -9,9 +9,9 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface ITransactionRepository : IDisposable
     {
-        IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource);
+        IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null);
 
-        IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period);
+        IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period, string searchTerm = null);
 
         void AddTransactionsToDataSource(DataSource dataSource, IEnumerable<Transaction> transactions);
 

@@ -16,13 +16,24 @@ namespace RevenueControl.DataAccess
             _db.Dispose();
         }
 
-        public IEnumerable<DataSource> GetClientDataSources(Client client)
+        public IEnumerable<DataSource> GetClientDataSources(Client client, string searchTerm = null)
         {
-            return _db.DataSources.Where(ds => ds.ClientName == client.Name);
+            IEnumerable<DataSource> returnValue;
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                returnValue = _db.DataSources.Where(ds => ds.ClientName == client.Name);
+            }
+            else
+            {
+                string toSearch = searchTerm.Trim();
+                returnValue = _db.DataSources.Where(ds => ds.ClientName == client.Name && ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)));
+            }
+            return returnValue;
         }
 
         public DataSource GetDataSource(DataSource dataSource)
         {
+            
             return _db.DataSources.Where(ds => ds.ClientName == dataSource.ClientName && ds.Id == dataSource.Id).SingleOrDefault();
         }
     }

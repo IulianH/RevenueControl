@@ -31,9 +31,9 @@ namespace RevenueControl.Services
             }
         }
 
-        public ActionResponse<DataSource> GetClientDataSources(Client client)
+        public ActionResponse<DataSource> GetClientDataSources(Client client, string searchTerm = null)
         {
-            IList<DataSource> toReturn = _dsRepo.GetClientDataSources(client).ToList();
+            IList<DataSource> toReturn = _dsRepo.GetClientDataSources(client, searchTerm).ToList();
             return new ActionResponse<DataSource>
             {
                 ResultList = toReturn,

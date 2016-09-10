@@ -10,7 +10,7 @@ namespace RevenueControl.DomainObjects.Interfaces
     public interface IDataSourceRepository : IDisposable
     {
         DataSource GetDataSource(DataSource dataSource);
-        IEnumerable<DataSource> GetClientDataSources(Client client);
+        IEnumerable<DataSource> GetClientDataSources(Client client, string searchTerm = null);
     }
 
 }

@@ -117,7 +117,7 @@ namespace RevenueControl.Services
             }
         }
 
-        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource)
+        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null)
         {
             return new ActionResponse<Transaction>
             {
@@ -127,7 +127,7 @@ namespace RevenueControl.Services
 
         }
 
-        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period)
+        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period, string searchTerm = null)
         {
             return new ActionResponse<Transaction>
             {

@@ -30,7 +30,7 @@ namespace RevenueControl.Tests.ServicesTests
                 Assert.Inconclusive("Zero transactions read from file");
             }
             var moqTrRepo = new Mock<ITransactionRepository>();
-            moqTrRepo.Setup(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId), It.IsAny<Period>()))
+            moqTrRepo.Setup(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId), It.IsAny<Period>(), null))
                 .Returns(reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new CultureInfo(cultureStr)));
 
             var moqDsRepo = new Mock<IDataSourceRepository>();
@@ -43,7 +43,7 @@ namespace RevenueControl.Tests.ServicesTests
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
-            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()), Times.AtLeastOnce);
+            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null), Times.AtLeastOnce);
             moqDsRepo.Verify(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)), Times.AtLeastOnce);
             Assert.IsTrue(response.Result == 0);
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
@@ -76,7 +76,7 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             Assert.IsTrue(response.Result == transactions.Count);
-            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()), Times.AtLeastOnce);
+            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null), Times.AtLeastOnce);
             moqDsRepo.Verify(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)), Times.AtLeastOnce);
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
@@ -188,7 +188,7 @@ namespace RevenueControl.Tests.ServicesTests
             moqFileReader.Setup(inst => inst.Read(GlobalSettings.GetResourceFilePath(resourceFile), new CultureInfo(cultureStr))).Returns(toAdd);
 
             var moqTrRepo = new Mock<ITransactionRepository>();
-            moqTrRepo.Setup(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()))
+            moqTrRepo.Setup(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null))
                 .Returns(existing);
 
             IEnumerable<Transaction> passedToRepository = null;
@@ -206,7 +206,7 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Result == 1);
             Assert.IsTrue(passedToRepository.Single() == toAdd[1]);
-            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>()), Times.AtLeastOnce);
+            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null), Times.AtLeastOnce);
             moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
             Assert.IsTrue(response.Status == ActionResponseCode.Success);

@@ -13,8 +13,8 @@ namespace RevenueControl.DomainObjects.Interfaces
 
         ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period);
 
-        ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource);
+        ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null);
 
-        ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period); 
+        ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period, string searchTerm = null); 
     }
 }

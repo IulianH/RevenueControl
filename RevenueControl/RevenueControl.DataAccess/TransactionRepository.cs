@@ -22,12 +22,12 @@ namespace RevenueControl.DataAccess
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period)
+        public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period, string searchTerm = null)
         {
             return _db.Transactions.Where(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate);
         }
 
-        public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource)
+        public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null)
         {
             return _db.Transactions.Where(t => t.DataSourceId == dataSource.Id);
         }

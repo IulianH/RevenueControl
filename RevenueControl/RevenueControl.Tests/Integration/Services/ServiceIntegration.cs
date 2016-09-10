@@ -10,7 +10,7 @@ using RevenueControl.DomainObjects;
 namespace RevenueControl.Tests.Integration.Services
 {
     [TestClass]
-    public class SingleDbIntegration
+    public class ServiceIntegration
     {
         const string clientName = "DefaultClient";
         readonly Transaction ds1Transaction1 = new Transaction
@@ -72,7 +72,6 @@ namespace RevenueControl.Tests.Integration.Services
             Assert.IsTrue(dataSource2.Id > 0);
 
 
-
             ITransactionRepository transactionRepository = new TransactionRepository();
             ITransactionManager transactionManager = new TransactionsManager(null, transactionRepository, null);
             ActionResponse<Transaction> transactions = transactionManager.GetDataSourceTransactions(dataSource1);
@@ -83,6 +82,9 @@ namespace RevenueControl.Tests.Integration.Services
             transactions = transactionManager.GetDataSourceTransactions(dataSource2);
             Assert.IsTrue(transactions.ResultList.Count == 1);
             Assert.IsTrue(transactions.ResultList[0] == ds2Transaction1);
+
+            ActionResponse<DataSource> searched = dsManager.GetClientDataSources(response.Result, "75ingb");
+            Assert.IsTrue(searched.ResultList.Count == 1 && searched.ResultList[0].BankAccount == "RO75INGB0000999901728780");
         }
 
        
