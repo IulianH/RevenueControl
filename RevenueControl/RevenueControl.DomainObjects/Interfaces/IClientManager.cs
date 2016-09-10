@@ -9,6 +9,6 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface IClientManager : IDisposable
     {
-        ActionResponse<Client> Client { get; }
+        ActionResponse<Client> SearchForClient(string clientName);
     }
 }

@@ -25,12 +25,15 @@ namespace RevenueControl.Services
 
         public void Dispose()
         {
-            _dsRepo.Dispose();
+            if (_dsRepo != null)
+            {
+                _dsRepo.Dispose();
+            }
         }
 
         public ActionResponse<DataSource> GetClientDataSources(Client client)
         {
-            ICollection<DataSource> toReturn = _dsRepo.GetClientDataSources(client).ToList();
+            IList<DataSource> toReturn = _dsRepo.GetClientDataSources(client).ToList();
             return new ActionResponse<DataSource>
             {
                 ResultList = toReturn,

@@ -107,7 +107,33 @@ namespace RevenueControl.Services
 
         public void Dispose()
         {
-            transactionRepository.Dispose();
+            if (transactionRepository != null)
+            {
+                transactionRepository.Dispose();
+            }
+            if(dataSourceRepository != null)
+            {
+                dataSourceRepository.Dispose();
+            }
+        }
+
+        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource)
+        {
+            return new ActionResponse<Transaction>
+            {
+                Status = ActionResponseCode.Success,
+                ResultList = transactionRepository.GetDataSourceTransactions(dataSource).ToArray()
+            };
+
+        }
+
+        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period)
+        {
+            return new ActionResponse<Transaction>
+            {
+                Status = ActionResponseCode.Success,
+                ResultList = transactionRepository.GetDataSourceTransactions(dataSource, period).ToArray() 
+            };
         }
     }
 }

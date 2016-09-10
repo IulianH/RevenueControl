@@ -12,10 +12,11 @@ namespace RevenueControl.Web.Controllers
 {
     public class HomeController : Controller
     {
+
         IDataSourceManager _repo = new DataSourceManager(new DataSourceRepository());
         public ActionResult Index()
         {
-            var model = _repo.GetClientDataSources(new ClientManger(new ClientRepository()).Client.Result).ResultList;
+            var model = _repo.GetClientDataSources(new ClientManager(new ClientRepository()).SearchForClient("DefaultClient").Result).ResultList;
 
             return View(model);
         }

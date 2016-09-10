@@ -10,6 +10,8 @@ namespace RevenueControl.DataAccess
 {
     public class TransactionRepository : ITransactionRepository
     {
+        RevenueControlDb _db = new RevenueControlDb();
+
         public void AddTransactionsToDataSource(DataSource dataSource, IEnumerable<Transaction> transactions)
         {
             throw new NotImplementedException();
@@ -20,14 +22,14 @@ namespace RevenueControl.DataAccess
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period)
         {
-            throw new NotImplementedException();
+            return _db.Transactions.Where(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate);
+        }
+
+        public IEnumerable<Transaction> GetDataSourceTransactions(DataSource dataSource)
+        {
+            return _db.Transactions.Where(t => t.DataSourceId == dataSource.Id);
         }
 
         public IEnumerable<Transaction> Search(DataSource dataSource, Transaction patternTransaction, Period period)

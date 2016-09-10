@@ -35,11 +35,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -59,11 +68,14 @@
     <Compile Include="DomainObjectsTests\TransactionTests.cs" />
     <Compile Include="FileReaderTests\CsvReaderTests.cs" />
     <Compile Include="GlobalSettings.cs" />
+    <Compile Include="Integration\Services\SingleDbIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesTests\TransactionManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Resources\Inquiry_statements.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -76,6 +88,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RevenueControl.DataAccess\RevenueControl.DataAccess.csproj">
+      <Project>{640C7584-35E0-4952-88D3-134FABADCAAC}</Project>
+      <Name>RevenueControl.DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RevenueControl.DomainObjects\RevenueControl.DomainObjects.csproj">
       <Project>{8e793a94-fb7d-4f07-9d2f-b243d48637e1}</Project>
       <Name>RevenueControl.DomainObjects</Name>
@@ -93,6 +109,7 @@
       <Name>RevenueControl.Services</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

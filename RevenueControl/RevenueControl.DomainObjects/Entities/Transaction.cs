@@ -9,7 +9,7 @@ namespace RevenueControl.DomainObjects.Entities
 {
     public enum TransactionType : byte
     {
-        Debit = 0,
+        Debit = 1,
         Credit
     }
 

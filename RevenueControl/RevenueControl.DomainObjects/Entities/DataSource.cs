@@ -19,7 +19,5 @@ namespace RevenueControl.DomainObjects.Entities
         public string ClientName { get; set; }
 
         public int Id { get; set; }
-
-        //public ICollection<Transaction> Transactions { get; set; }
     }
 }

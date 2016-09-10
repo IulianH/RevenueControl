@@ -17,6 +17,6 @@ namespace RevenueControl.DomainObjects
         public ActionResponseCode Status { get; set; }
         public string ActionResponseMessage { get; set; }
         public T Result { get; set; }
-        public ICollection<T> ResultList { get; set; }
+        public IList<T> ResultList { get; set; }
     }
 }
