@@ -13,10 +13,10 @@ namespace RevenueControl.Web.Controllers
     public class HomeController : Controller
     {
 
-        IDataSourceManager _repo = new DataSourceManager(new DataSourceRepository());
+        IDataSourceManager _repo = new DataSourceManager(new Repository<DataSource>());
         public ActionResult Index(string searchTerm = null)
         {
-            var model = _repo.GetClientDataSources(new ClientManager(new ClientRepository()).SearchForClient("DefaultClient").Result, searchTerm).ResultList;
+            var model = _repo.GetClientDataSources(new ClientManager(new Repository<Client>()).SearchForClient("DefaultClient").Result, searchTerm).ResultList;
 
             return View(model);
         }

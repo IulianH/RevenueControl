@@ -47,12 +47,12 @@ namespace RevenueControl.Tests.Integration.Services
         [TestMethod]
         public void DataSourceReadTest()
         {
-            IClientRepository clientRepo = new ClientRepository();
+            IRepository<Client> clientRepo = new Repository<Client>();
             IClientManager clientManager = new ClientManager(clientRepo);
             ActionResponse<Client> response = clientManager.SearchForClient(clientName);
             Assert.IsTrue(response.Result.Name == clientName);
 
-            IDataSourceRepository dsRepo = new DataSourceRepository();
+            IRepository<DataSource> dsRepo = new Repository<DataSource>();
             IDataSourceManager dsManager = new DataSourceManager(dsRepo);
 
             ActionResponse<DataSource> dataSources = dsManager.GetClientDataSources(response.Result);
@@ -72,7 +72,7 @@ namespace RevenueControl.Tests.Integration.Services
             Assert.IsTrue(dataSource2.Id > 0);
 
 
-            ITransactionRepository transactionRepository = new TransactionRepository();
+            IRepository<Transaction> transactionRepository = new Repository<Transaction>();
             ITransactionManager transactionManager = new TransactionsManager(null, transactionRepository, null);
             ActionResponse<Transaction> transactions = transactionManager.GetDataSourceTransactions(dataSource1);
             Assert.IsTrue(transactions.ResultList.Count == 2);

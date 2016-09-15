@@ -8,7 +8,7 @@ using RevenueControl.DomainObjects.Entities;
 
 namespace RevenueControl.DataAccess
 {
-    public class TransactionRepository : ITransactionRepository
+    /*public class TransactionRepository : ITransactionRepository
     {
         RevenueControlDb _db = new RevenueControlDb();
 
@@ -31,10 +31,5 @@ namespace RevenueControl.DataAccess
         {
             return _db.Transactions.Where(t => t.DataSourceId == dataSource.Id);
         }
-
-        public IEnumerable<Transaction> Search(DataSource dataSource, Transaction patternTransaction, Period period)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    }*/
 }

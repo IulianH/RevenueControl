@@ -11,9 +11,9 @@ namespace RevenueControl.Services
 {
     public class DataSourceManager : IDataSourceManager
     {
-        IDataSourceRepository _dsRepo;
+        IRepository<DataSource> _dsRepo;
 
-        public DataSourceManager(IDataSourceRepository dsRepo)
+        public DataSourceManager(IRepository<DataSource> dsRepo)
         {
             _dsRepo = dsRepo;
         }
@@ -33,18 +33,22 @@ namespace RevenueControl.Services
 
         public ActionResponse<DataSource> GetClientDataSources(Client client, string searchTerm = null)
         {
-            IList<DataSource> toReturn = _dsRepo.GetClientDataSources(client, searchTerm).ToList();
+            IList<DataSource> toReturn;
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                toReturn = _dsRepo.SearchFor(ds => ds.ClientName == client.Name).ToArray();
+            }
+            else
+            {
+                string toSearch = searchTerm.Trim();
+                toReturn = _dsRepo.SearchFor(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
+            }
             return new ActionResponse<DataSource>
             {
                 ResultList = toReturn,
                 Status = ActionResponseCode.Success
             };
 
-        }
-
-        public ActionResponse<DataSource> GetDataSources(Client client)
-        {
-            throw new NotImplementedException();
         }
     }
 }

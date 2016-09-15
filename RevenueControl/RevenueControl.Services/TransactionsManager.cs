@@ -14,13 +14,13 @@ namespace RevenueControl.Services
 {
     public class TransactionsManager : ITransactionManager
     {
-        private IDataSourceRepository dataSourceRepository;
-        private ITransactionRepository transactionRepository;
+        private IRepository<DataSource> dataSourceRepository;
+        private IRepository<Transaction> transactionRepository;
         private ITransactionFileReader fileReader;
 
 
-        public TransactionsManager(IDataSourceRepository dataSourceRepository, 
-            ITransactionRepository transactionRepository, 
+        public TransactionsManager(IRepository<DataSource> dataSourceRepository, 
+            IRepository<Transaction> transactionRepository, 
             ITransactionFileReader fileReader)
         {
             this.dataSourceRepository = dataSourceRepository;
@@ -48,7 +48,7 @@ namespace RevenueControl.Services
 
         private DataSource GetDataSource(DataSource dataSource)
         {
-            return dataSourceRepository.GetDataSource(dataSource);
+            return dataSourceRepository.GetById(dataSource.Id);
         }
 
 
@@ -74,7 +74,7 @@ namespace RevenueControl.Services
                 {
                     Period selectedPeriod = new Period(transactionsFromFile[0].TransactionDate, transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
                     HashSet<int> indexesToRemove = new HashSet<int>();
-                    foreach (Transaction dbTransaction in transactionRepository.GetDataSourceTransactions(repoDataSource, selectedPeriod))
+                    foreach (Transaction dbTransaction in transactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate))
                     {
                         int idx = transactionsFromFile.IndexOf(dbTransaction);
                         if (idx > -1)
@@ -82,7 +82,12 @@ namespace RevenueControl.Services
                             indexesToRemove.Add(idx);
                         }
                     }
-                    transactionRepository.AddTransactionsToDataSource(repoDataSource, transactionsFromFile.Where((transaction, index) => !indexesToRemove.Contains(index)));
+                    foreach(Transaction transaction in transactionsFromFile.Where((transaction, index) => !indexesToRemove.Contains(index)))
+                    {
+                        transaction.DataSourceId = repoDataSource.Id;
+                        transactionRepository.Insert(transaction);
+                    }
+
                     ret.Result = transactionsFromFile.Count - indexesToRemove.Count;
                     ret.Status = ActionResponseCode.Success;
                 }
@@ -119,10 +124,11 @@ namespace RevenueControl.Services
 
         public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null)
         {
+
             return new ActionResponse<Transaction>
             {
                 Status = ActionResponseCode.Success,
-                ResultList = transactionRepository.GetDataSourceTransactions(dataSource).ToArray()
+                ResultList = transactionRepository.SearchFor(tr => tr.DataSourceId == dataSource.Id).ToArray()
             };
 
         }
@@ -132,7 +138,7 @@ namespace RevenueControl.Services
             return new ActionResponse<Transaction>
             {
                 Status = ActionResponseCode.Success,
-                ResultList = transactionRepository.GetDataSourceTransactions(dataSource, period).ToArray() 
+                ResultList = transactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray()
             };
         }
     }

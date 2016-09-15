@@ -10,6 +10,7 @@ using RevenueControl.DomainObjects;
 using RevenueControl.Resources;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace RevenueControl.Tests.ServicesTests
 {
@@ -29,12 +30,12 @@ namespace RevenueControl.Tests.ServicesTests
             {
                 Assert.Inconclusive("Zero transactions read from file");
             }
-            var moqTrRepo = new Mock<ITransactionRepository>();
-            moqTrRepo.Setup(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId), It.IsAny<Period>(), null))
+            var moqTrRepo = new Mock<IRepository<Transaction>>();
+            moqTrRepo.Setup(inst => inst.SearchFor(It.IsAny<Expression<Func<Transaction, bool>>>()))
                 .Returns(reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new CultureInfo(cultureStr)));
 
-            var moqDsRepo = new Mock<IDataSourceRepository>();
-            moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
+            var moqDsRepo = new Mock<IRepository<DataSource>>();
+            moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
 
             TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
@@ -43,8 +44,8 @@ namespace RevenueControl.Tests.ServicesTests
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
-            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null), Times.AtLeastOnce);
-            moqDsRepo.Verify(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)), Times.AtLeastOnce);
+            moqTrRepo.Verify(inst => inst.SearchFor(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)), Times.AtLeastOnce);
             Assert.IsTrue(response.Result == 0);
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
@@ -65,9 +66,9 @@ namespace RevenueControl.Tests.ServicesTests
             {
                 Assert.Inconclusive("Zero transactions read from file");
             }
-            var moqTrRepo = new Mock<ITransactionRepository>();
-            var moqDsRepo = new Mock<IDataSourceRepository>();
-            moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
+            var moqTrRepo = new Mock<IRepository<Transaction>>();
+            var moqDsRepo = new Mock<IRepository<DataSource>>();
+            moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
             TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
 
@@ -76,8 +77,8 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             Assert.IsTrue(response.Result == transactions.Count);
-            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null), Times.AtLeastOnce);
-            moqDsRepo.Verify(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)), Times.AtLeastOnce);
+            moqTrRepo.Verify(inst => inst.SearchFor(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)), Times.AtLeastOnce);
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
 
@@ -97,9 +98,9 @@ namespace RevenueControl.Tests.ServicesTests
             {
                 Assert.Inconclusive("The transaction file is not empty");
             }
-            var moqTrRepo = new Mock<ITransactionRepository>();
-            var moqDsRepo = new Mock<IDataSourceRepository>();
-            moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
+            var moqTrRepo = new Mock<IRepository<Transaction>>();
+            var moqDsRepo = new Mock<IRepository<DataSource>>();
+            moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
             TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
 
@@ -109,7 +110,7 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.NoActionPerformed);
             Assert.IsTrue(response.ActionResponseMessage == Localization.GetZeroTransactionsInFile(new CultureInfo(cultureStr)));
-            moqDsRepo.Verify(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)), Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -128,9 +129,9 @@ namespace RevenueControl.Tests.ServicesTests
             {
                 Assert.Inconclusive("Zero transactions read from file");
             }
-            var moqTrRepo = new Mock<ITransactionRepository>();
-            var moqDsRepo = new Mock<IDataSourceRepository>();
-            moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
+            var moqTrRepo = new Mock<IRepository<Transaction>>();
+            var moqDsRepo = new Mock<IRepository<DataSource>>();
+            moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
             TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
 
@@ -139,7 +140,7 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.NotFound);
-            moqDsRepo.Verify(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == 4 && ds.ClientName == clientId)), Times.AtLeastOnce);
+            moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == 4)), Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -187,16 +188,14 @@ namespace RevenueControl.Tests.ServicesTests
             var moqFileReader = new Mock<ITransactionFileReader>();
             moqFileReader.Setup(inst => inst.Read(GlobalSettings.GetResourceFilePath(resourceFile), new CultureInfo(cultureStr))).Returns(toAdd);
 
-            var moqTrRepo = new Mock<ITransactionRepository>();
-            moqTrRepo.Setup(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null))
-                .Returns(existing);
+            var moqTrRepo = new Mock<IRepository<Transaction>>();
+            moqTrRepo.Setup(inst => inst.SearchFor(It.IsAny<Expression<Func<Transaction, bool>>>())).Returns(existing);
 
-            IEnumerable<Transaction> passedToRepository = null;
-            moqTrRepo.Setup(inst => inst.AddTransactionsToDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<IEnumerable<Transaction>>()))
-                .Callback<DataSource, IEnumerable<Transaction>>((ds, list) => passedToRepository = list);
+            List<Transaction> passedToRepository = new List<Transaction>();
+            
 
-            var moqDsRepo = new Mock<IDataSourceRepository>();
-            moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
+            var moqDsRepo = new Mock<IRepository<DataSource>>();
+            moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
             TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, moqFileReader.Object);
 
@@ -205,9 +204,10 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             Assert.IsTrue(response.Result == 1);
-            Assert.IsTrue(passedToRepository.Single() == toAdd[1]);
-            moqTrRepo.Verify(inst => inst.GetDataSourceTransactions(It.Is<DataSource>(ds => ds.Id == dataSourceId), It.IsAny<Period>(), null), Times.AtLeastOnce);
-            moqDsRepo.Setup(inst => inst.GetDataSource(It.Is<DataSource>(ds => ds.Id == dataSourceId && ds.ClientName == clientId)))
+            moqTrRepo.Verify(inst => inst.SearchFor(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.AtLeastOnce);
+            moqTrRepo.Verify(inst => inst.Insert(It.Is<Transaction>(tr => tr == toAdd[1])), Times.Once);
+            moqTrRepo.Verify(inst => inst.Insert(It.IsAny<Transaction>()), Times.Once);
+            moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }

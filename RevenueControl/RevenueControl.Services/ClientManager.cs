@@ -11,8 +11,8 @@ namespace RevenueControl.Services
 {
     public class ClientManager : IClientManager
     {
-        IClientRepository _clientRepo;
-        public ClientManager(IClientRepository clientRepo)
+        IRepository<Client> _clientRepo;
+        public ClientManager(IRepository<Client> clientRepo)
         {
             _clientRepo = clientRepo;
         }
@@ -29,7 +29,8 @@ namespace RevenueControl.Services
         {
             ActionResponse<Client> toReturn = new ActionResponse<Client>();
             toReturn.Result = new Client();
-            Client dbClient = _clientRepo.Clients.SingleOrDefault(c => c.Name == clientName);
+
+            Client dbClient = _clientRepo.SearchFor(client => client.Name == clientName).SingleOrDefault();
             if (dbClient != null)
             {
                 toReturn.Status = ActionResponseCode.Success;

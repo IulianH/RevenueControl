@@ -48,12 +48,10 @@
     <Compile Include="Exceptions\InvalidTransactionException.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="Interfaces\IClientManager.cs" />
-    <Compile Include="Interfaces\IClientRepository.cs" />
     <Compile Include="Interfaces\IDataSourceManager.cs" />
-    <Compile Include="Interfaces\IDataSourceRepository.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Interfaces\ITransactionManager.cs" />
     <Compile Include="Interfaces\ITransactionFileReader.cs" />
-    <Compile Include="Interfaces\ITransactionRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ActionResponse.cs" />
   </ItemGroup>
