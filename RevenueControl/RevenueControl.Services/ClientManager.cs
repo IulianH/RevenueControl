@@ -11,18 +11,15 @@ namespace RevenueControl.Services
 {
     public class ClientManager : IClientManager
     {
-        IRepository<Client> _clientRepo;
-        public ClientManager(IRepository<Client> clientRepo)
+        IUnitOfWork unitOfWork;
+        public ClientManager(IUnitOfWork unitOfWork)
         {
-            _clientRepo = clientRepo;
+            this.unitOfWork = unitOfWork;
         }
 
         public void Dispose()
         {
-            if (_clientRepo != null)
-            {
-                _clientRepo.Dispose();
-            }
+            unitOfWork.Dispose();
         }
 
         bool ValidateClient(Client client)
@@ -45,7 +42,7 @@ namespace RevenueControl.Services
             ActionResponse<Client> toReturn = new ActionResponse<Client>();
             toReturn.Result = new Client();
 
-            Client dbClient = _clientRepo.SearchFor(client => client.Name.ToUpper() == clientName.ToUpper()).SingleOrDefault();
+            Client dbClient = unitOfWork.ClientRepository.SearchFor(client => client.Name.ToUpper() == clientName.ToUpper()).SingleOrDefault();
             if (dbClient != null)
             {
                 toReturn.Status = ActionResponseCode.Success;
@@ -71,7 +68,8 @@ namespace RevenueControl.Services
                 }
                 else
                 {
-                    _clientRepo.Insert(client);
+                    unitOfWork.ClientRepository.Insert(client);
+                    unitOfWork.Save();
                     returnValue.Status = ActionResponseCode.Success;
                     returnValue.Result = client;
                 }
@@ -85,7 +83,8 @@ namespace RevenueControl.Services
 
        public void DeleteClient(Client client)
        {
-            _clientRepo.Delete(client);
+            unitOfWork.ClientRepository.Delete(client);
+            unitOfWork.Save();
        }
     }
 }

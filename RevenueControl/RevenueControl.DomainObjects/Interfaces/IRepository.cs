@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RevenueControl.DomainObjects.Interfaces
 {
-    public interface IRepository<T> : IDisposable
+    public interface IRepository<T> 
     {
         void Insert(T entity);
         void Delete(T entity);

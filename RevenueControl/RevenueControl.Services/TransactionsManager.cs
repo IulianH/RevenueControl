@@ -14,17 +14,13 @@ namespace RevenueControl.Services
 {
     public class TransactionsManager : ITransactionManager
     {
-        private IRepository<DataSource> dataSourceRepository;
-        private IRepository<Transaction> transactionRepository;
+
         private ITransactionFileReader fileReader;
+        IUnitOfWork unitOfWork;
 
-
-        public TransactionsManager(IRepository<DataSource> dataSourceRepository, 
-            IRepository<Transaction> transactionRepository, 
-            ITransactionFileReader fileReader)
+        public TransactionsManager(IUnitOfWork unitOfWork, ITransactionFileReader fileReader)
         {
-            this.dataSourceRepository = dataSourceRepository;
-            this.transactionRepository = transactionRepository;
+            this.unitOfWork = unitOfWork;
             this.fileReader = fileReader;
         }
 
@@ -48,7 +44,7 @@ namespace RevenueControl.Services
 
         private DataSource GetDataSource(DataSource dataSource)
         {
-            return dataSourceRepository.GetById(dataSource.Id);
+            return unitOfWork.DataSourceRepository.GetById(dataSource.Id);
         }
 
 
@@ -74,7 +70,7 @@ namespace RevenueControl.Services
                 {
                     Period selectedPeriod = new Period(transactionsFromFile[0].TransactionDate, transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
                     HashSet<int> indexesToRemove = new HashSet<int>();
-                    foreach (Transaction dbTransaction in transactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate))
+                    foreach (Transaction dbTransaction in unitOfWork.TransactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate))
                     {
                         int idx = transactionsFromFile.IndexOf(dbTransaction);
                         if (idx > -1)
@@ -85,9 +81,9 @@ namespace RevenueControl.Services
                     foreach(Transaction transaction in transactionsFromFile.Where((transaction, index) => !indexesToRemove.Contains(index)))
                     {
                         transaction.DataSourceId = repoDataSource.Id;
-                        transactionRepository.Insert(transaction);
+                        unitOfWork.TransactionRepository.Insert(transaction);
                     }
-
+                    unitOfWork.Save();
                     ret.Result = transactionsFromFile.Count - indexesToRemove.Count;
                     ret.Status = ActionResponseCode.Success;
                 }
@@ -112,14 +108,7 @@ namespace RevenueControl.Services
 
         public void Dispose()
         {
-            if (transactionRepository != null)
-            {
-                transactionRepository.Dispose();
-            }
-            if(dataSourceRepository != null)
-            {
-                dataSourceRepository.Dispose();
-            }
+            unitOfWork.Dispose();
         }
 
         public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null)
@@ -128,7 +117,7 @@ namespace RevenueControl.Services
             return new ActionResponse<Transaction>
             {
                 Status = ActionResponseCode.Success,
-                ResultList = transactionRepository.SearchFor(tr => tr.DataSourceId == dataSource.Id).ToArray()
+                ResultList = unitOfWork.TransactionRepository.SearchFor(tr => tr.DataSourceId == dataSource.Id).ToArray()
             };
 
         }
@@ -138,7 +127,7 @@ namespace RevenueControl.Services
             return new ActionResponse<Transaction>
             {
                 Status = ActionResponseCode.Success,
-                ResultList = transactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray()
+                ResultList = unitOfWork.TransactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray()
             };
         }
     }

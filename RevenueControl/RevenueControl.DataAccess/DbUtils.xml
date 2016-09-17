@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Stuff>
-  This updates the database: 
-  Update-Database -ProjectName RevenueControl.DataAccess -Verbose
-</Stuff>

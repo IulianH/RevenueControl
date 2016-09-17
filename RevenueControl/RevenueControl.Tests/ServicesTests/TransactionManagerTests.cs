@@ -37,8 +37,12 @@ namespace RevenueControl.Tests.ServicesTests
             var moqDsRepo = new Mock<IRepository<DataSource>>();
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
+            var moqUnitOfWork = new Mock<IUnitOfWork>();
+            moqUnitOfWork.SetupGet(inst => inst.DataSourceRepository).Returns(moqDsRepo.Object);
+            moqUnitOfWork.SetupGet(inst => inst.TransactionRepository).Returns(moqTrRepo.Object);
 
-            TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
+
+            TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
@@ -70,7 +74,10 @@ namespace RevenueControl.Tests.ServicesTests
             var moqDsRepo = new Mock<IRepository<DataSource>>();
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
-            TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
+            var moqUnitOfWork = new Mock<IUnitOfWork>();
+            moqUnitOfWork.SetupGet(inst => inst.DataSourceRepository).Returns(moqDsRepo.Object);
+            moqUnitOfWork.SetupGet(inst => inst.TransactionRepository).Returns(moqTrRepo.Object);
+            TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
@@ -102,7 +109,10 @@ namespace RevenueControl.Tests.ServicesTests
             var moqDsRepo = new Mock<IRepository<DataSource>>();
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
-            TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
+            var moqUnitOfWork = new Mock<IUnitOfWork>();
+            moqUnitOfWork.SetupGet(inst => inst.DataSourceRepository).Returns(moqDsRepo.Object);
+            moqUnitOfWork.SetupGet(inst => inst.TransactionRepository).Returns(moqTrRepo.Object);
+            TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource { Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
@@ -133,7 +143,10 @@ namespace RevenueControl.Tests.ServicesTests
             var moqDsRepo = new Mock<IRepository<DataSource>>();
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
-            TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, new GenericCsvReader());
+            var moqUnitOfWork = new Mock<IUnitOfWork>();
+            moqUnitOfWork.SetupGet(inst => inst.DataSourceRepository).Returns(moqDsRepo.Object);
+            moqUnitOfWork.SetupGet(inst => inst.TransactionRepository).Returns(moqTrRepo.Object);
+            TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource { Id = 4, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
@@ -197,7 +210,10 @@ namespace RevenueControl.Tests.ServicesTests
             var moqDsRepo = new Mock<IRepository<DataSource>>();
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                 .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
-            TransactionsManager transactionManager = new TransactionsManager(moqDsRepo.Object, moqTrRepo.Object, moqFileReader.Object);
+            var moqUnitOfWork = new Mock<IUnitOfWork>();
+            moqUnitOfWork.SetupGet(inst => inst.DataSourceRepository).Returns(moqDsRepo.Object);
+            moqUnitOfWork.SetupGet(inst => inst.TransactionRepository).Returns(moqTrRepo.Object);
+            TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, moqFileReader.Object);
 
             // Act
             ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource { Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));

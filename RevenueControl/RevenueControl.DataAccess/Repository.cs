@@ -12,89 +12,51 @@ namespace RevenueControl.DataAccess
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected RevenueControlDb db = new RevenueControlDb();
+        RevenueControlDb context;
+        DbSet<T> dbSet;
+        public Repository(RevenueControlDb context)
+        {
+            this.context = context;
+            this.dbSet = context.Set<T>();
+        }
+
         public void Delete(T entity)
         {
-            if (db.Entry(entity).State == EntityState.Detached)
+            if (context.Entry(entity).State == EntityState.Detached)
             {
-                db.Set<T>().Attach(entity);
+                dbSet.Attach(entity);
             }
-            db.Entry(entity).State = EntityState.Unchanged;
-            db.Set<T>().Remove(entity);
-            db.SaveChanges();
+            context.Entry(entity).State = EntityState.Unchanged;
+            context.Set<T>().Remove(entity);
         }
 
         public void Insert(T entity)
         {
-            db.Set<T>().Add(entity);
-            db.SaveChanges();
+            dbSet.Add(entity);
         }
 
         public void Update(T entity)
         {
-            if (db.Entry(entity).State == EntityState.Detached)
+            if (context.Entry(entity).State == EntityState.Detached)
             {
-                db.Set<T>().Attach(entity);
+                dbSet.Attach(entity);
             }
-            db.Entry(entity).State = EntityState.Modified;
-            db.Entry<T>(entity).State = System.Data.Entity.EntityState.Modified;
-            db.SaveChanges();
+            context.Entry(entity).State = EntityState.Modified; 
         }
 
         public IEnumerable<T> SearchFor(Expression<Func<T, bool>> predicate)
         {
-            return db.Set<T>().Where(predicate);
+            return dbSet.Where(predicate);
         }
 
         public IEnumerable<T> GetAll()
         {
-            return db.Set<T>();
+            return dbSet;
         }
 
         public T GetById(params object[] keys)
         {
-            return db.Set<T>().Find(keys);
+            return dbSet.Find(keys);
         }
-
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                    db.Dispose();
-                    db = null; 
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~BaseRepository() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-
-       
-        #endregion
-
-
     }
 }

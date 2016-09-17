@@ -12,11 +12,11 @@ namespace RevenueControl.Services
 {
     public class DataSourceManager : IDataSourceManager
     {
-        IRepository<DataSource> _dsRepo;
+        IUnitOfWork unitOfWork;
 
-        public DataSourceManager(IRepository<DataSource> dsRepo)
+        public DataSourceManager(IUnitOfWork unitOfWork)
         {
-            _dsRepo = dsRepo;
+            this.unitOfWork = unitOfWork;
         }
 
         private bool ValidateDataSource(DataSource dataSource)
@@ -52,9 +52,10 @@ namespace RevenueControl.Services
                 {
                     dataSource.Name = dataSource.Name.Trim();
                 }
-                if(_dsRepo.SearchFor(ds => ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
+                if(unitOfWork.DataSourceRepository.SearchFor(ds => ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
                 {
-                    _dsRepo.Insert(dataSource);
+                    unitOfWork.DataSourceRepository.Insert(dataSource);
+                    unitOfWork.Save();
                     returnValue.Status = ActionResponseCode.Success;
                     returnValue.Result = dataSource;
                 }
@@ -72,10 +73,7 @@ namespace RevenueControl.Services
 
         public void Dispose()
         {
-            if (_dsRepo != null)
-            {
-                _dsRepo.Dispose();
-            }
+           unitOfWork.Dispose();
         }
 
         public ActionResponse<DataSource> GetClientDataSources(Client client, string searchTerm = null)
@@ -83,12 +81,12 @@ namespace RevenueControl.Services
             IList<DataSource> toReturn;
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                toReturn = _dsRepo.SearchFor(ds => ds.ClientName == client.Name).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.SearchFor(ds => ds.ClientName == client.Name).ToArray();
             }
             else
             {
                 string toSearch = searchTerm.Trim();
-                toReturn = _dsRepo.SearchFor(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.SearchFor(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
             }
             return new ActionResponse<DataSource>
             {
