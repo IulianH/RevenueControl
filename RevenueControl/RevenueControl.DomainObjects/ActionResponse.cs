@@ -2,6 +2,7 @@
 
 namespace RevenueControl.DomainObjects
 {
+
     public enum ActionResponseCode
     {
         None = 0,

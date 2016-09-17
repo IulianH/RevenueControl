@@ -68,7 +68,7 @@
     <Compile Include="DomainObjectsTests\TransactionTests.cs" />
     <Compile Include="FileReaderTests\CsvReaderTests.cs" />
     <Compile Include="GlobalSettings.cs" />
-    <Compile Include="Integration\Services\ServiceIntegration.cs" />
+    <Compile Include="Integration\Services\TransactionServiceIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesTests\TransactionManagerTests.cs" />
   </ItemGroup>

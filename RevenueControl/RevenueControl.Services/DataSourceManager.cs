@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RevenueControl.DomainObjects;
 using RevenueControl.DomainObjects.Entities;
+using System.Globalization;
 
 namespace RevenueControl.Services
 {
@@ -18,9 +19,55 @@ namespace RevenueControl.Services
             _dsRepo = dsRepo;
         }
 
+        private bool ValidateDataSource(DataSource dataSource)
+        {
+            bool returnValue;
+            if(!string.IsNullOrWhiteSpace(dataSource.BankAccount) && !string.IsNullOrWhiteSpace(dataSource.Culture))
+            {
+                try
+                {
+                    CultureInfo culture = CultureInfo.CreateSpecificCulture(dataSource.Culture);
+                    returnValue = true;
+                }
+                catch (Exception)
+                {
+                    returnValue = false;
+                }
+            }
+            else
+            {
+                returnValue = false;
+            }
+            return returnValue;
+        }
+
         public ActionResponse<DataSource> CreateDataSource(DataSource dataSource)
         {
-            throw new NotImplementedException();
+            ActionResponse<DataSource> returnValue = new ActionResponse<DataSource>();
+            if(ValidateDataSource(dataSource))
+            {
+                dataSource.BankAccount = dataSource.BankAccount.Trim();
+                dataSource.Culture = dataSource.Culture.Trim();
+                if(!string.IsNullOrWhiteSpace(dataSource.Name))
+                {
+                    dataSource.Name = dataSource.Name.Trim();
+                }
+                if(_dsRepo.SearchFor(ds => ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
+                {
+                    _dsRepo.Insert(dataSource);
+                    returnValue.Status = ActionResponseCode.Success;
+                    returnValue.Result = dataSource;
+                }
+                else
+                {
+                    returnValue.Status = ActionResponseCode.AlreadyExists;
+                }
+            }
+            else
+            {
+                returnValue.Status = ActionResponseCode.InvalidInput;
+            }
+            return returnValue;
         }
 
         public void Dispose()

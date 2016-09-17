@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RevenueControl.DomainObjects;
 using System.Linq.Expressions;
+using System.Data.Entity;
 
 namespace RevenueControl.DataAccess
 {
@@ -14,6 +15,11 @@ namespace RevenueControl.DataAccess
         protected RevenueControlDb db = new RevenueControlDb();
         public void Delete(T entity)
         {
+            if (db.Entry(entity).State == EntityState.Detached)
+            {
+                db.Set<T>().Attach(entity);
+            }
+            db.Entry(entity).State = EntityState.Unchanged;
             db.Set<T>().Remove(entity);
             db.SaveChanges();
         }
@@ -26,6 +32,11 @@ namespace RevenueControl.DataAccess
 
         public void Update(T entity)
         {
+            if (db.Entry(entity).State == EntityState.Detached)
+            {
+                db.Set<T>().Attach(entity);
+            }
+            db.Entry(entity).State = EntityState.Modified;
             db.Entry<T>(entity).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
         }

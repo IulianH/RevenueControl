@@ -25,12 +25,27 @@ namespace RevenueControl.Services
             }
         }
 
+        bool ValidateClient(Client client)
+        {
+            bool returnValue;
+            if(!string.IsNullOrWhiteSpace(client.Name))
+            {
+                returnValue = client.Name.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c));
+
+            }
+            else
+            {
+                returnValue = false;
+            }
+            return returnValue;
+        }
+
         public ActionResponse<Client> SearchForClient(string clientName)
         {
             ActionResponse<Client> toReturn = new ActionResponse<Client>();
             toReturn.Result = new Client();
 
-            Client dbClient = _clientRepo.SearchFor(client => client.Name == clientName).SingleOrDefault();
+            Client dbClient = _clientRepo.SearchFor(client => client.Name.ToUpper() == clientName.ToUpper()).SingleOrDefault();
             if (dbClient != null)
             {
                 toReturn.Status = ActionResponseCode.Success;
@@ -42,5 +57,35 @@ namespace RevenueControl.Services
             }
             return toReturn;
         }
+
+        public ActionResponse<Client> AddNewClient(Client client)
+        {
+            ActionResponse<Client> returnValue = new ActionResponse<Client>();
+            if (ValidateClient(client))
+            {
+                client.Name = client.Name.Trim();
+                ActionResponse<Client> result = SearchForClient(client.Name);
+                if (result.Status == ActionResponseCode.Success)
+                {
+                    returnValue.Status = ActionResponseCode.AlreadyExists;
+                }
+                else
+                {
+                    _clientRepo.Insert(client);
+                    returnValue.Status = ActionResponseCode.Success;
+                    returnValue.Result = client;
+                }
+            }
+            else
+            {
+                returnValue.Status = ActionResponseCode.InvalidInput; 
+            }
+            return returnValue;
+        }
+
+       public void DeleteClient(Client client)
+       {
+            _clientRepo.Delete(client);
+       }
     }
 }

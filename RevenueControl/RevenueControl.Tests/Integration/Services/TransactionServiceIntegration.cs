@@ -6,13 +6,17 @@ using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.Services;
 using RevenueControl.DomainObjects.Entities;
 using RevenueControl.DomainObjects;
+using System.Collections.Generic;
+using RevenueControl.InquiryFileReaders.Csv;
 
 namespace RevenueControl.Tests.Integration.Services
 {
     [TestClass]
-    public class ServiceIntegration
+    public class TransactionServiceIntegration
     {
-        const string clientName = "DefaultClient";
+
+        const string c_clientName = "TestTransactionService";
+        const string resourceFile = "Tranzactii_pe_perioada.csv";
         readonly Transaction ds1Transaction1 = new Transaction
         {
             Amount = 189.67M,
@@ -44,13 +48,93 @@ namespace RevenueControl.Tests.Integration.Services
         };
 
 
+        private bool CreateClient(bool toUpper = false)
+        {
+            ActionResponse<Client> result;
+            IRepository<Client> clientRepo = new Repository<Client>();
+            using (IClientManager clientManager = new ClientManager(clientRepo))
+            {
+                Client newClient = new Client
+                {
+                    Name = toUpper ? c_clientName.ToUpper() : c_clientName
+                };
+                result = clientManager.AddNewClient(newClient);
+            }
+            return result.Status == ActionResponseCode.Success;
+        }
+
+        private bool DeleteClient()
+        {
+            Client client = new Client
+            {
+                Name = c_clientName
+            };
+            bool returnValue;
+            IRepository<Client> clientRepo = new Repository<Client>();
+            using (IClientManager clientManager = new ClientManager(clientRepo))
+            {
+                clientManager.DeleteClient(client);
+                returnValue = clientManager.SearchForClient(client.Name).Status == ActionResponseCode.NotFound;
+            }
+            return returnValue;
+        }
+
+        private DataSource CreateDataSource()
+        {
+            IRepository<DataSource> dsRepo = new Repository<DataSource>();
+            using (IDataSourceManager dsManager = new DataSourceManager(dsRepo))
+            {
+                DataSource dataSource = new DataSource
+                {
+                    BankAccount = "RO75SMB0000999901728781",
+                    ClientName = c_clientName,
+                    Culture = "ro-RO"
+                };
+                ActionResponse<DataSource> result = dsManager.CreateDataSource(dataSource);
+                return result.Result;
+            }
+        }
+
+        IList<Transaction> LoadTransactions(DataSource dataSource)
+        {
+            ITransactionFileReader fileReader = new GenericCsvReader();
+            IRepository <DataSource> dsRepo = new Repository<DataSource>();
+            IRepository<Transaction> trRepo = new Repository<Transaction>();
+            using (ITransactionManager trManager = new TransactionsManager(dsRepo, trRepo, fileReader))
+            {
+                trManager.AddTransactionsToDataSource(dataSource, GlobalSettings.GetResourceFilePath(resourceFile));
+                return trManager.GetDataSourceTransactions(dataSource).ResultList;
+            }
+        }
+
         [TestMethod]
+        public void TransactionServiceIntegrationTest()
+        {
+
+            
+            try
+            {
+                Assert.IsTrue(CreateClient());
+                Assert.IsFalse(CreateClient());
+                Assert.IsFalse(CreateClient(true));
+                DataSource dataSource = CreateDataSource();
+                Assert.IsTrue(dataSource != null);
+                Assert.IsTrue(dataSource.Id > 0);
+
+            }
+            finally
+            {
+                Assert.IsTrue(DeleteClient());
+            }
+        }
+
+        //[TestMethod]
         public void DataSourceReadTest()
         {
             IRepository<Client> clientRepo = new Repository<Client>();
             IClientManager clientManager = new ClientManager(clientRepo);
-            ActionResponse<Client> response = clientManager.SearchForClient(clientName);
-            Assert.IsTrue(response.Result.Name == clientName);
+            ActionResponse<Client> response = clientManager.SearchForClient(c_clientName);
+            Assert.IsTrue(response.Result.Name == c_clientName);
 
             IRepository<DataSource> dsRepo = new Repository<DataSource>();
             IDataSourceManager dsManager = new DataSourceManager(dsRepo);
@@ -62,13 +146,13 @@ namespace RevenueControl.Tests.Integration.Services
             DataSource dataSource1 = dataSources.ResultList.Single(ds => ds.BankAccount == "RO75INGB0000999901728780");
             Assert.IsTrue(dataSource1.Name == "Cont Curent");
             Assert.IsTrue(dataSource1.Culture == "ro-RO");
-            Assert.IsTrue(dataSource1.ClientName == clientName);
+            Assert.IsTrue(dataSource1.ClientName == c_clientName);
             Assert.IsTrue(dataSource1.Id > 0);
 
             DataSource dataSource2 = dataSources.ResultList.Single(ds => ds.BankAccount == "RO45INGB0000999905243630");
             Assert.IsTrue(dataSource2.Name == "Credit Card");
             Assert.IsTrue(dataSource2.Culture == "ro-RO");
-            Assert.IsTrue(dataSource2.ClientName == clientName);
+            Assert.IsTrue(dataSource2.ClientName == c_clientName);
             Assert.IsTrue(dataSource2.Id > 0);
 
 
