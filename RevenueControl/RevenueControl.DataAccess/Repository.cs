@@ -48,7 +48,28 @@ namespace RevenueControl.DataAccess
            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
            string includeProperties = "")
         {
-            return dbSet.Where(filter);
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
+            else
+            {
+                return query.ToList();
+            }
+
         }
 
         public T GetById(params object[] keys)
