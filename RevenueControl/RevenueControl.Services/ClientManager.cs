@@ -86,5 +86,11 @@ namespace RevenueControl.Services
             unitOfWork.ClientRepository.Delete(client);
             unitOfWork.Save();
        }
+
+        public bool HasDataSources(Client client)
+        {
+            IList<DataSource> dataSources = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName.ToUpper() == client.Name.ToUpper(), null, null, 1).ToList();
+            return dataSources.Count > 0;
+        }
     }
 }

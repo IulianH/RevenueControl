@@ -21,37 +21,6 @@ namespace RevenueControl.Tests.Integration.Services
         const string ds1Culture = "ro-RO";
         const string ds1Name = "Cont Curent";
 
-        readonly Transaction ds1Transaction1 = new Transaction
-        {
-            Amount = 189.67M,
-            DataSourceId = 1,
-            OtherDetails = "Terminal: SELGROS - 155 ID04  RO  IASI",
-            TransactionDate = new DateTime(2016, 4, 27),
-            TransactionDetails = "Cumparare POS",
-            TransactionType = TransactionType.Debit
-        };
-
-        readonly Transaction ds1Transaction2 = new Transaction
-        {
-            Amount = 54M,
-            DataSourceId = 1,
-            OtherDetails = "Terminal: RESTAURANT DIONISOS  RO  IASI",
-            TransactionDate = new DateTime(2016, 4, 29),
-            TransactionDetails = "Cumparare POS",
-            TransactionType = TransactionType.Debit
-        };
-
-        readonly Transaction ds2Transaction1 = new Transaction
-        {
-            Amount = 12M,
-            DataSourceId = 2,
-            OtherDetails = "Salariu",
-            TransactionDate = new DateTime(2016, 4, 28),
-            TransactionDetails = "Virament",
-            TransactionType = TransactionType.Credit
-        };
-
-
         private bool CreateClient(bool toUpper = false)
         {
             ActionResponse<Client> result;
@@ -81,18 +50,35 @@ namespace RevenueControl.Tests.Integration.Services
             return returnValue;
         }
 
-        private DataSource CreateDataSource()
+        DataSource Ds1
         {
-            using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
+            get
             {
-                DataSource dataSource = new DataSource
+                return new DataSource
                 {
                     BankAccount = ds1BankAccount,
                     ClientName = c_clientName,
                     Culture = ds1Culture,
                     Name = ds1Name
                 };
-                ActionResponse<DataSource> result = dsManager.CreateDataSource(dataSource);
+            }
+
+        }
+
+        Client Client
+        {
+            get
+            {
+                return new Client { Name = c_clientName };
+            }
+            
+        }
+
+        private DataSource CreateDataSource()
+        {
+            using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
+            {
+                ActionResponse<DataSource> result = dsManager.CreateDataSource(Ds1);
                 return result.Result;
             }
         }
@@ -119,7 +105,23 @@ namespace RevenueControl.Tests.Integration.Services
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
-                return dsManager.GetClientDataSources(new Client { Name = c_clientName }, searchTerm).ResultList;
+                return dsManager.GetClientDataSources(Client, searchTerm).ResultList;
+            }
+        }
+
+        bool HasDataSources()
+        {
+            using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
+            {
+                return clientManager.HasDataSources(Client);
+            }
+        }
+
+        bool HasTransactions(DataSource dataSource)
+        {
+            using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
+            {
+                return dsManager.HasTransactions(dataSource);
             }
         }
 
@@ -129,11 +131,14 @@ namespace RevenueControl.Tests.Integration.Services
             try
             {
                 Assert.IsTrue(CreateClient());
+                Assert.IsFalse(HasDataSources());
                 Assert.IsFalse(CreateClient());
                 Assert.IsFalse(CreateClient(true));
                 DataSource dataSource = CreateDataSource();
                 Assert.IsTrue(dataSource != null);
+                Assert.IsTrue(HasDataSources());
                 Assert.IsTrue(dataSource.Id > 0);
+                Assert.IsFalse(HasTransactions(dataSource));
                 IList<DataSource> dsList = SearchDataSource(ds1Name.Substring(1, 7).ToLower());
                 Assert.IsTrue(dsList.Count == 1);
                 dataSource = dsList[0];
@@ -141,6 +146,7 @@ namespace RevenueControl.Tests.Integration.Services
                 Assert.IsTrue(dataSource.BankAccount == ds1BankAccount);
                 Assert.IsTrue(dataSource.Culture == ds1Culture);
                 int transactionCount = LoadTransactions(dataSource);
+                Assert.IsTrue(HasTransactions(dataSource));
                 Assert.IsTrue(transactionCount == 3);
                 transactionCount = LoadTransactions(dataSource);
                 Assert.IsTrue(transactionCount == 0);

@@ -93,7 +93,12 @@ namespace RevenueControl.Services
                 ResultList = toReturn,
                 Status = ActionResponseCode.Success
             };
+        }
 
+        public bool HasTransactions(DataSource dataSource)
+        {
+            IList<Transaction> transactions = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id, null, null, 1).ToList();
+            return transactions.Count > 0;
         }
     }
 }

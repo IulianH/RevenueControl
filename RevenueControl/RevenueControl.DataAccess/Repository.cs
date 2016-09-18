@@ -46,8 +46,9 @@ namespace RevenueControl.DataAccess
 
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-           string includeProperties = "")
+           string includeProperties = "", int take = 0)
         {
+            IList<T> returnValue = null;
             IQueryable<T> query = dbSet;
 
             if (filter != null)
@@ -55,21 +56,29 @@ namespace RevenueControl.DataAccess
                 query = query.Where(filter);
             }
 
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            if (!string.IsNullOrWhiteSpace(includeProperties))
             {
-                query = query.Include(includeProperty);
+                foreach (var includeProperty in includeProperties.Split
+                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            if(take > 0)
+            {
+                query = query.Take(take);
             }
 
             if (orderBy != null)
             {
-                return orderBy(query).ToList();
+                returnValue = orderBy(query).ToList();
             }
             else
             {
-                return query.ToList();
+                returnValue = query.ToList();
             }
-
+            return returnValue;
         }
 
         public T GetById(params object[] keys)

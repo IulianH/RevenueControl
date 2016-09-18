@@ -14,7 +14,7 @@ namespace RevenueControl.DomainObjects.Interfaces
         void Update(T entity);
         IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            string includeProperties = "");
+            string includeProperties = "", int take = 0);
         T GetById(params object[] keys);
     }
 }

@@ -32,7 +32,7 @@ namespace RevenueControl.Tests.ServicesTests
             }
             var moqTrRepo = new Mock<IRepository<Transaction>>();
             moqTrRepo.Setup(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny< Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new CultureInfo(cultureStr)));
 
             var moqDsRepo = new Mock<IRepository<DataSource>>();
@@ -50,7 +50,7 @@ namespace RevenueControl.Tests.ServicesTests
 
             // Assert
             moqTrRepo.Verify(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny<Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
-                It.IsAny<string>()), Times.AtLeastOnce);
+                It.IsAny<string>(), It.IsAny<int>()), Times.AtLeastOnce);
             moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)), Times.AtLeastOnce);
             Assert.IsTrue(response.Result == 0);
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
@@ -87,7 +87,7 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Result == transactions.Count);
             moqTrRepo.Verify(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny<Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
-                It.IsAny<string>()), Times.AtLeastOnce);
+                It.IsAny<string>(), It.IsAny<int>()), Times.AtLeastOnce);
             moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)), Times.AtLeastOnce);
             Assert.IsTrue(response.Status == ActionResponseCode.Success);
         }
@@ -206,7 +206,7 @@ namespace RevenueControl.Tests.ServicesTests
 
             var moqTrRepo = new Mock<IRepository<Transaction>>();
             moqTrRepo.Setup(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny<Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
-                It.IsAny<string>())).Returns(existing);
+                It.IsAny<string>(), It.IsAny<int>())).Returns(existing);
 
             List<Transaction> passedToRepository = new List<Transaction>();
             
@@ -225,7 +225,7 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Result == 1);
             moqTrRepo.Verify(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny<Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
-                It.IsAny<string>()), Times.AtLeastOnce);
+                It.IsAny<string>(), It.IsAny<int>()), Times.AtLeastOnce);
             moqTrRepo.Verify(inst => inst.Insert(It.Is<Transaction>(tr => tr == toAdd[1])), Times.Once);
             moqTrRepo.Verify(inst => inst.Insert(It.IsAny<Transaction>()), Times.Once);
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))

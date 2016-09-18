@@ -12,5 +12,7 @@ namespace RevenueControl.DomainObjects.Interfaces
         ActionResponse<DataSource> CreateDataSource(DataSource dataSource);
 
         ActionResponse<DataSource> GetClientDataSources(Client client, string searchTerm = null);
+
+        bool HasTransactions(DataSource dataSource);
     }
 }
