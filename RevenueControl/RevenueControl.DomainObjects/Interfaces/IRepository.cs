@@ -12,8 +12,7 @@ namespace RevenueControl.DomainObjects.Interfaces
         void Insert(T entity);
         void Delete(T entity);
         void Update(T entity);
-        IEnumerable<T> SearchFor(Expression<Func<T, bool>> predicate);
-        IEnumerable<T> GetAll();
+        IEnumerable<T> Get(Expression<Func<T, bool>> predicate);
         T GetById(params object[] keys);
     }
 }

@@ -44,14 +44,9 @@ namespace RevenueControl.DataAccess
             context.Entry(entity).State = EntityState.Modified; 
         }
 
-        public IEnumerable<T> SearchFor(Expression<Func<T, bool>> predicate)
+        public IEnumerable<T> Get(Expression<Func<T, bool>> predicate)
         {
             return dbSet.Where(predicate);
-        }
-
-        public IEnumerable<T> GetAll()
-        {
-            return dbSet;
         }
 
         public T GetById(params object[] keys)

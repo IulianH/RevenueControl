@@ -70,7 +70,7 @@ namespace RevenueControl.Services
                 {
                     Period selectedPeriod = new Period(transactionsFromFile[0].TransactionDate, transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
                     HashSet<int> indexesToRemove = new HashSet<int>();
-                    foreach (Transaction dbTransaction in unitOfWork.TransactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate))
+                    foreach (Transaction dbTransaction in unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate))
                     {
                         int idx = transactionsFromFile.IndexOf(dbTransaction);
                         if (idx > -1)
@@ -117,7 +117,7 @@ namespace RevenueControl.Services
             return new ActionResponse<Transaction>
             {
                 Status = ActionResponseCode.Success,
-                ResultList = unitOfWork.TransactionRepository.SearchFor(tr => tr.DataSourceId == dataSource.Id).ToArray()
+                ResultList = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id).ToArray()
             };
 
         }
@@ -127,7 +127,7 @@ namespace RevenueControl.Services
             return new ActionResponse<Transaction>
             {
                 Status = ActionResponseCode.Success,
-                ResultList = unitOfWork.TransactionRepository.SearchFor(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray()
+                ResultList = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray()
             };
         }
     }

@@ -52,7 +52,7 @@ namespace RevenueControl.Services
                 {
                     dataSource.Name = dataSource.Name.Trim();
                 }
-                if(unitOfWork.DataSourceRepository.SearchFor(ds => ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
+                if(unitOfWork.DataSourceRepository.Get(ds => ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
                 {
                     unitOfWork.DataSourceRepository.Insert(dataSource);
                     unitOfWork.Save();
@@ -81,12 +81,12 @@ namespace RevenueControl.Services
             IList<DataSource> toReturn;
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                toReturn = unitOfWork.DataSourceRepository.SearchFor(ds => ds.ClientName == client.Name).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == client.Name).ToArray();
             }
             else
             {
                 string toSearch = searchTerm.Trim();
-                toReturn = unitOfWork.DataSourceRepository.SearchFor(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
             }
             return new ActionResponse<DataSource>
             {

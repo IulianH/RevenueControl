@@ -42,7 +42,7 @@ namespace RevenueControl.Services
             ActionResponse<Client> toReturn = new ActionResponse<Client>();
             toReturn.Result = new Client();
 
-            Client dbClient = unitOfWork.ClientRepository.SearchFor(client => client.Name.ToUpper() == clientName.ToUpper()).SingleOrDefault();
+            Client dbClient = unitOfWork.ClientRepository.Get(client => client.Name.ToUpper() == clientName.ToUpper()).SingleOrDefault();
             if (dbClient != null)
             {
                 toReturn.Status = ActionResponseCode.Success;
