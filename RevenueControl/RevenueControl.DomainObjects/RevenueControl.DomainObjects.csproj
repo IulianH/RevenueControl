@@ -51,6 +51,7 @@
     <Compile Include="Interfaces\IDataSourceManager.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Interfaces\IDataRequestValidator.cs" />
+    <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\ITransactionManager.cs" />
     <Compile Include="Interfaces\ITransactionFileReader.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />

@@ -9,10 +9,16 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface IDataSourceManager : IDisposable
     {
-        ActionResponse<DataSource> CreateDataSource(DataSource dataSource);
+        ActionResponse Insert(DataSource dataSource);
 
-        ActionResponse<DataSource> GetClientDataSources(Client client, string searchTerm = null);
+        IList<DataSource> Get(Client client, string searchTerm = null);
 
         bool HasTransactions(DataSource dataSource);
+
+        DataSource GetById(int id);
+
+        ActionResponse Delete(DataSource dataSource);
+
+        ActionResponse Update(DataSource dataSource);
     }
 }

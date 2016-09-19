@@ -46,7 +46,7 @@ namespace RevenueControl.Tests.ServicesTests
             TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
-            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
+            ParametrizedActionResponse<int> response = transactionManager.Insert(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
             moqTrRepo.Verify(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny<Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
@@ -76,13 +76,15 @@ namespace RevenueControl.Tests.ServicesTests
             var moqDsRepo = new Mock<IRepository<DataSource>>();
             moqDsRepo.Setup(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)))
                .Returns(new DataSource { ClientName = clientId, Id = dataSourceId, Culture = cultureStr });
+            moqTrRepo.Setup(inst => inst.Get(It.IsAny<Expression<Func<Transaction, bool>>>(), It.IsAny<Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>>>(),
+                It.IsAny<string>(), It.IsAny<int>())).Returns(new Transaction[0]);
             var moqUnitOfWork = new Mock<IUnitOfWork>();
             moqUnitOfWork.SetupGet(inst => inst.DataSourceRepository).Returns(moqDsRepo.Object);
             moqUnitOfWork.SetupGet(inst => inst.TransactionRepository).Returns(moqTrRepo.Object);
             TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
-            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
+            ParametrizedActionResponse<int> response = transactionManager.Insert(new DataSource {Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
             Assert.IsTrue(response.Result == transactions.Count);
@@ -118,7 +120,7 @@ namespace RevenueControl.Tests.ServicesTests
             TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
-            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource { Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
+            ParametrizedActionResponse<int> response = transactionManager.Insert(new DataSource { Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.NoActionPerformed);
@@ -152,7 +154,7 @@ namespace RevenueControl.Tests.ServicesTests
             TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, new GenericCsvReader());
 
             // Act
-            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource { Id = 4, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
+            ParametrizedActionResponse<int> response = transactionManager.Insert(new DataSource { Id = 4, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.NotFound);
@@ -220,7 +222,7 @@ namespace RevenueControl.Tests.ServicesTests
             TransactionsManager transactionManager = new TransactionsManager(moqUnitOfWork.Object, moqFileReader.Object);
 
             // Act
-            ActionResponse<int> response = transactionManager.AddTransactionsToDataSource(new DataSource { Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
+            ParametrizedActionResponse<int> response = transactionManager.Insert(new DataSource { Id = dataSourceId, ClientName = clientId }, GlobalSettings.GetResourceFilePath(resourceFile));
 
             // Assert
             Assert.IsTrue(response.Result == 1);

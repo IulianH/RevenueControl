@@ -13,108 +13,114 @@ using RevenueControl.Services;
 
 namespace RevenueControl.Web.Controllers
 {
-    public class ClientsController : Controller
+    public class DataSourcesController : Controller
     {
-        private RevenueControlDb db = new RevenueControlDb();
-
-        IClientManager manager = new ClientManager(new UnitOfWork());
-
-        // GET: Clients
-        public ActionResult Index()
+       
+        private IDataSourceManager manager = new DataSourceManager(new UnitOfWork());
+        private Client Client
         {
-            return View(manager.Get());
+            get
+            {
+                return new Client {Name = "DefaultClient" };
+            }
         }
 
-        // GET: Clients/Details/5
-        public ActionResult Details(string id)
+
+        // GET: DataSources
+        public ActionResult Index()
+        {
+            return View(manager.Get(Client));
+        }
+
+        // GET: DataSources/Details/5
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
-            Client client = manager.GetById(id);
-            if (client == null)
+            DataSource dataSource = manager.GetById(id.Value);
+            if (dataSource == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(dataSource);
         }
 
-        // GET: Clients/Create
+        // GET: DataSources/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
+        // POST: DataSources/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name")] Client client)
+        public ActionResult Create([Bind(Include = "Id,BankAccount,Name,Culture,ClientName")] DataSource dataSource)
         {
             if (ModelState.IsValid)
             {
-                manager.AddNew(client);
+                manager.Insert(dataSource);
                 return RedirectToAction("Index");
             }
 
-            return View(client);
+            return View(dataSource);
         }
 
-        // GET: Clients/Edit/5
-        public ActionResult Edit(string id)
+        // GET: DataSources/Edit/5
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = manager.GetById(id);
-            if (client == null)
+            DataSource dataSource = manager.GetById(id.Value);
+            if (dataSource == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(dataSource);
         }
 
-        // POST: Clients/Edit/5
+        // POST: DataSources/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Name")] Client client)
+        public ActionResult Edit([Bind(Include = "Id,BankAccount,Name,Culture,ClientName")] DataSource dataSource)
         {
             if (ModelState.IsValid)
             {
-                manager.Update(client);
+                manager.Update(dataSource);
                 return RedirectToAction("Index");
             }
-            return View(client);
+            return View(dataSource);
         }
 
-        // GET: Clients/Delete/5
-        public ActionResult Delete(string id)
+        // GET: DataSources/Delete/5
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = manager.GetById(id);
-            if (client == null)
+            DataSource dataSource = manager.GetById(id.Value);
+            if (dataSource == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(dataSource);
         }
 
-        // POST: Clients/Delete/5
+        // POST: DataSources/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            Client client = manager.GetById(id);
-            manager.Delete(client);
+            DataSource dataSource = manager.GetById(id);
+            manager.Delete(dataSource); 
             return RedirectToAction("Index");
         }
 

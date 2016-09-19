@@ -9,12 +9,16 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface IClientManager : IDisposable
     {
-        ActionResponse<Client> SearchForClient(string clientName);
+        IList<Client> Get();
 
-        ActionResponse<Client> AddNewClient(Client client);
+        Client GetById(string clientName);
 
-        void DeleteClient(Client client);
+        ActionResponse AddNew(Client client);
+
+        ActionResponse Delete(Client client);
 
         bool HasDataSources(Client client);
+
+        ActionResponse Update(Client client);
     }
 }

@@ -48,9 +48,9 @@ namespace RevenueControl.Services
         }
 
 
-        public ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period)
+        public ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile, Period period)
         {
-            ActionResponse<int> ret = new ActionResponse<int>();
+            ParametrizedActionResponse<int> ret = new ParametrizedActionResponse<int>();
             DataSource repoDataSource = GetDataSource(dataSource);
 
             if (repoDataSource != null)
@@ -101,9 +101,9 @@ namespace RevenueControl.Services
             return ret;
         }
 
-        public ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile)
+        public ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile)
         {
-            return AddTransactionsToDataSource(dataSource, transactionReportFile, GlobalConstants.MaxPeriod);
+            return Insert(dataSource, transactionReportFile, GlobalConstants.MaxPeriod);
         }
 
         public void Dispose()
@@ -111,24 +111,16 @@ namespace RevenueControl.Services
             unitOfWork.Dispose();
         }
 
-        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null)
+        public IList<Transaction> Get(DataSource dataSource, string searchTerm = null)
         {
-
-            return new ActionResponse<Transaction>
-            {
-                Status = ActionResponseCode.Success,
-                ResultList = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id).ToArray()
-            };
-
+            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id);
+            return returnValue;
         }
 
-        public ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period, string searchTerm = null)
+        public IList<Transaction> Get(DataSource dataSource, Period period, string searchTerm = null)
         {
-            return new ActionResponse<Transaction>
-            {
-                Status = ActionResponseCode.Success,
-                ResultList = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray()
-            };
+            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate);
+            return returnValue;
         }
     }
 }

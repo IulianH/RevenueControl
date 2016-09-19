@@ -37,32 +37,20 @@ namespace RevenueControl.Services
             return returnValue;
         }
 
-        public ActionResponse<Client> SearchForClient(string clientName)
+        public Client GetById(string clientName)
         {
-            ActionResponse<Client> toReturn = new ActionResponse<Client>();
-            toReturn.Result = new Client();
-
-            Client dbClient = unitOfWork.ClientRepository.Get(client => client.Name.ToUpper() == clientName.ToUpper()).SingleOrDefault();
-            if (dbClient != null)
-            {
-                toReturn.Status = ActionResponseCode.Success;
-                toReturn.Result.Name = dbClient.Name;
-            }
-            else
-            {
-                toReturn.Status = ActionResponseCode.NotFound;
-            }
-            return toReturn;
+            Client client = unitOfWork.ClientRepository.GetById(clientName);
+            return client;
         }
 
-        public ActionResponse<Client> AddNewClient(Client client)
+        public ActionResponse AddNew(Client client)
         {
-            ActionResponse<Client> returnValue = new ActionResponse<Client>();
+            ActionResponse returnValue = new ActionResponse();
             if (ValidateClient(client))
             {
                 client.Name = client.Name.Trim();
-                ActionResponse<Client> result = SearchForClient(client.Name);
-                if (result.Status == ActionResponseCode.Success)
+                Client existing = GetById(client.Name);
+                if (existing != null)
                 {
                     returnValue.Status = ActionResponseCode.AlreadyExists;
                 }
@@ -71,7 +59,6 @@ namespace RevenueControl.Services
                     unitOfWork.ClientRepository.Insert(client);
                     unitOfWork.Save();
                     returnValue.Status = ActionResponseCode.Success;
-                    returnValue.Result = client;
                 }
             }
             else
@@ -81,16 +68,52 @@ namespace RevenueControl.Services
             return returnValue;
         }
 
-       public void DeleteClient(Client client)
+       public ActionResponse Delete(Client client)
        {
             unitOfWork.ClientRepository.Delete(client);
             unitOfWork.Save();
+            return new ActionResponse
+            {
+                Status = ActionResponseCode.Success
+            };
        }
 
         public bool HasDataSources(Client client)
         {
-            IList<DataSource> dataSources = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName.ToUpper() == client.Name.ToUpper(), null, null, 1).ToList();
+            IList<DataSource> dataSources = unitOfWork.DataSourceRepository.Get(filter: ds => ds.ClientName.ToUpper() == client.Name.ToUpper(), take: 1).ToList();
             return dataSources.Count > 0;
+        }
+
+        public IList<Client> Get()
+        {
+            IList<Client> returnValue = null;
+            returnValue = unitOfWork.ClientRepository.Get();
+            return returnValue;
+        }
+
+        public ActionResponse Update(Client client)
+        {
+            ActionResponse returnValue = new ActionResponse();
+            if (ValidateClient(client))
+            {
+                client.Name = client.Name.Trim();
+                Client existing = GetById(client.Name);
+                if (existing != null)
+                {
+                    returnValue.Status = ActionResponseCode.AlreadyExists;
+                }
+                else
+                {
+                    unitOfWork.ClientRepository.Update(client);
+                    unitOfWork.Save();
+                    returnValue.Status = ActionResponseCode.Success;
+                }
+            }
+            else
+            {
+                returnValue.Status = ActionResponseCode.InvalidInput;
+            }
+            return returnValue;
         }
     }
 }

@@ -9,12 +9,12 @@ namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface ITransactionManager : IDisposable
     {
-        ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile);
+        ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile);
 
-        ActionResponse<int> AddTransactionsToDataSource(DataSource dataSource, string transactionReportFile, Period period);
+        ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile, Period period);
 
-        ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, string searchTerm = null);
+        IList<Transaction> Get(DataSource dataSource, string searchTerm = null);
 
-        ActionResponse<Transaction> GetDataSourceTransactions(DataSource dataSource, Period period, string searchTerm = null); 
+        IList<Transaction> Get(DataSource dataSource, Period period, string searchTerm = null); 
     }
 }

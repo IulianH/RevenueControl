@@ -10,14 +10,23 @@ namespace RevenueControl.DomainObjects
         NoActionPerformed,
         InvalidInput,
         AlreadyExists,
+        NotPermitted,
+        DatabaseError,
+        UnspecifiedError,
         NotFound
     }
 
-    public class ActionResponse<T>
+    public class ParametrizedActionResponse<T>
     {
         public ActionResponseCode Status { get; set; }
         public string ActionResponseMessage { get; set; }
         public T Result { get; set; }
-        public IList<T> ResultList { get; set; }
+    }
+
+
+    public class ActionResponse
+    {
+        public ActionResponseCode Status { get; set; }
+        public string ActionResponseMessage { get; set; }
     }
 }

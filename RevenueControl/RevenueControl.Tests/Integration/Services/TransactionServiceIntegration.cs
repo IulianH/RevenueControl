@@ -23,17 +23,19 @@ namespace RevenueControl.Tests.Integration.Services
 
         private bool CreateClient(bool toUpper = false)
         {
-            ActionResponse<Client> result;
+            ActionResponse result;
             using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
             {
                 Client newClient = new Client
                 {
                     Name = toUpper ? c_clientName.ToUpper() : c_clientName
                 };
-                result = clientManager.AddNewClient(newClient);
+                result = clientManager.AddNew(newClient);
             }
             return result.Status == ActionResponseCode.Success;
         }
+
+
 
         private bool DeleteClient()
         {
@@ -44,8 +46,8 @@ namespace RevenueControl.Tests.Integration.Services
             bool returnValue;
             using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
             {
-                clientManager.DeleteClient(client);
-                returnValue = clientManager.SearchForClient(client.Name).Status == ActionResponseCode.NotFound;
+                clientManager.Delete(client);
+                returnValue = (clientManager.GetById(client.Name) == null);
             }
             return returnValue;
         }
@@ -78,8 +80,9 @@ namespace RevenueControl.Tests.Integration.Services
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
-                ActionResponse<DataSource> result = dsManager.CreateDataSource(Ds1);
-                return result.Result;
+                DataSource ds1 = Ds1;
+                ActionResponse result = dsManager.Insert(ds1);
+                return ds1;
             }
         }
 
@@ -89,7 +92,7 @@ namespace RevenueControl.Tests.Integration.Services
            
             using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), fileReader))
             {
-                return trManager.AddTransactionsToDataSource(dataSource, GlobalSettings.GetResourceFilePath(resourceFile)).Result;
+                return trManager.Insert(dataSource, GlobalSettings.GetResourceFilePath(resourceFile)).Result;
             }
         }
 
@@ -97,7 +100,7 @@ namespace RevenueControl.Tests.Integration.Services
         {
             using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), null))
             {
-                return trManager.GetDataSourceTransactions(dataSource).ResultList;
+                return trManager.Get(dataSource);
             }
         }
 
@@ -105,7 +108,7 @@ namespace RevenueControl.Tests.Integration.Services
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
-                return dsManager.GetClientDataSources(Client, searchTerm).ResultList;
+                return dsManager.Get(Client, searchTerm);
             }
         }
 
@@ -152,6 +155,7 @@ namespace RevenueControl.Tests.Integration.Services
                 Assert.IsTrue(transactionCount == 0);
                 IList<Transaction> transactions = GetAllTransactions(dataSource);
                 Assert.IsTrue(transactions.Count == 3);
+
             }
             finally
             {

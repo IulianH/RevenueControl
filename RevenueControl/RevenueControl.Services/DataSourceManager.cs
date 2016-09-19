@@ -41,9 +41,9 @@ namespace RevenueControl.Services
             return returnValue;
         }
 
-        public ActionResponse<DataSource> CreateDataSource(DataSource dataSource)
+        public ActionResponse Insert(DataSource dataSource)
         {
-            ActionResponse<DataSource> returnValue = new ActionResponse<DataSource>();
+            ActionResponse returnValue = new ActionResponse();
             if(ValidateDataSource(dataSource))
             {
                 dataSource.BankAccount = dataSource.BankAccount.Trim();
@@ -57,7 +57,6 @@ namespace RevenueControl.Services
                     unitOfWork.DataSourceRepository.Insert(dataSource);
                     unitOfWork.Save();
                     returnValue.Status = ActionResponseCode.Success;
-                    returnValue.Result = dataSource;
                 }
                 else
                 {
@@ -76,7 +75,7 @@ namespace RevenueControl.Services
            unitOfWork.Dispose();
         }
 
-        public ActionResponse<DataSource> GetClientDataSources(Client client, string searchTerm = null)
+        public IList<DataSource> Get(Client client, string searchTerm = null)
         {
             IList<DataSource> toReturn;
             if (string.IsNullOrWhiteSpace(searchTerm))
@@ -86,19 +85,41 @@ namespace RevenueControl.Services
             else
             {
                 string toSearch = searchTerm.Trim();
-                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch))));
             }
-            return new ActionResponse<DataSource>
-            {
-                ResultList = toReturn,
-                Status = ActionResponseCode.Success
-            };
+            return toReturn;
         }
 
         public bool HasTransactions(DataSource dataSource)
         {
-            IList<Transaction> transactions = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id, null, null, 1).ToList();
+            IList<Transaction> transactions = unitOfWork.TransactionRepository.Get(filter: tr => tr.DataSourceId == dataSource.Id, take: 1).ToList();
             return transactions.Count > 0;
+        }
+
+        public DataSource GetById(int id)
+        {
+            return unitOfWork.DataSourceRepository.GetById(id);
+        }
+
+        public ActionResponse Delete(DataSource dataSource)
+        {
+            unitOfWork.DataSourceRepository.Delete(dataSource);
+            unitOfWork.Save();
+            return new ActionResponse
+            {
+                Status = ActionResponseCode.Success
+            };
+
+        }
+
+        public ActionResponse Update(DataSource dataSource)
+        {
+            unitOfWork.DataSourceRepository.Update(dataSource);
+            unitOfWork.Save();
+            return new ActionResponse
+            {
+                Status = ActionResponseCode.Success
+            };
         }
     }
 }
