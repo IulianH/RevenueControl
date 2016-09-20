@@ -20,13 +20,16 @@ namespace RevenueControl.DataAccess
 
         public DbSet<Transaction> Transactions { get; set; }
 
+        public DbSet<TransactionTag> TransactionTags { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            
 
             modelBuilder.Entity<Client>()
                 .HasKey<string>(c => c.Name)
-                .Property(p => p.Name).HasMaxLength(50);
+                .Property(p => p.Name).HasMaxLength(30);
+            modelBuilder.Entity<Transaction>().Ignore(t => t.Tags);
 
             /*modelBuilder.Entity<DataSource>()
                 .HasKey<int>(ds => ds.Id)

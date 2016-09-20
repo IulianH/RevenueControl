@@ -11,6 +11,8 @@ namespace RevenueControl.DomainObjects.Interfaces
 
         IRepository<Transaction> TransactionRepository { get; }
 
+        IRepository<TransactionTag> TransactionTagRepository { get; }
+
         void Save();
     }
 }

@@ -20,6 +20,8 @@ namespace RevenueControl.Tests.Integration.Services
         const string ds1BankAccount = "RO75SMB0000999901728781";
         const string ds1Culture = "ro-RO";
         const string ds1Name = "Cont Curent";
+        readonly string[] Tags = new string[] {"Tag1", "Tag2" };
+
 
         private bool CreateClient(bool toUpper = false)
         {
@@ -104,6 +106,14 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
+        bool TagTransaction(Transaction transaction)
+        {
+            using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), null))
+            {
+                return trManager.TagTransaction(transaction.Id, Tags).Status == ActionResponseCode.Success;
+            }
+        }
+
         IList<DataSource> SearchDataSource(string searchTerm)
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
@@ -128,6 +138,20 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
+        Client GetClientById()
+        {
+            using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
+            {
+                return clientManager.GetById(c_clientName);
+            }
+        }
+
+        [TestMethod]
+        public void Smth()
+        {
+            IList<Transaction> trans = GetAllTransactions(new DataSource {Id = 1 });
+        }
+
         [TestMethod]
         public void TransactionServiceIntegrationTest()
         {
@@ -137,6 +161,8 @@ namespace RevenueControl.Tests.Integration.Services
                 Assert.IsFalse(HasDataSources());
                 Assert.IsFalse(CreateClient());
                 Assert.IsFalse(CreateClient(true));
+                var client = GetClientById();
+                Assert.IsTrue(client != null);
                 DataSource dataSource = CreateDataSource();
                 Assert.IsTrue(dataSource != null);
                 Assert.IsTrue(HasDataSources());
@@ -155,7 +181,11 @@ namespace RevenueControl.Tests.Integration.Services
                 Assert.IsTrue(transactionCount == 0);
                 IList<Transaction> transactions = GetAllTransactions(dataSource);
                 Assert.IsTrue(transactions.Count == 3);
-
+                Assert.IsTrue(transactions[0].GetType() == typeof(Transaction));
+                Assert.IsTrue(TagTransaction(transactions.Last()));
+                transactions = GetAllTransactions(dataSource);
+                Assert.IsTrue(transactions.Last().Tags.Count == 2);
+                Assert.IsTrue(transactions.First().Tags.Count == 0);
             }
             finally
             {

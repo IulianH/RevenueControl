@@ -29,6 +29,8 @@ namespace RevenueControl.DomainObjects.Entities
 
         public int DataSourceId { get; set; }
 
+        public ICollection<string> Tags { get; set; }
+
         private bool Equals(Transaction other)
         {
             return TransactionDate == other.TransactionDate 

@@ -16,5 +16,6 @@ namespace RevenueControl.DomainObjects.Interfaces
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             string includeProperties = "", int take = 0);
         T GetById(params object[] keys);
+        IQueryable<T> Set { get; }
     }
 }

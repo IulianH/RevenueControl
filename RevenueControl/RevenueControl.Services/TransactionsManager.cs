@@ -114,6 +114,10 @@ namespace RevenueControl.Services
         public IList<Transaction> Get(DataSource dataSource, string searchTerm = null)
         {
             IList<Transaction> returnValue = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id);
+            foreach(Transaction transaction in returnValue)
+            {
+                transaction.Tags = unitOfWork.TransactionTagRepository.Get(tag => tag.TransactionId == transaction.Id).Select(tag => tag.Tag).ToArray();           
+            }
             return returnValue;
         }
 
@@ -121,6 +125,34 @@ namespace RevenueControl.Services
         {
             IList<Transaction> returnValue = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate);
             return returnValue;
+        }
+
+        public ActionResponse TagTransaction(int transactionId, IList<string> tags)
+        {
+            IList<string> existingTags = unitOfWork.TransactionTagRepository.Get(tag => tag.TransactionId == transactionId).Select(tag => tag.Tag.ToUpper()).ToArray();
+            IList<string> toAddTags = tags.Where(tag => !string.IsNullOrWhiteSpace(tag) && !existingTags.Contains(tag.ToUpper())).Select(tag => tag.Trim()).ToArray();
+            if (toAddTags.Count > 0)
+            { 
+                DataSource dataSource = unitOfWork.DataSourceRepository.GetById(unitOfWork.TransactionRepository.GetById(transactionId).DataSourceId);
+                foreach(string tag in toAddTags)
+                {
+                    unitOfWork.TransactionTagRepository.Insert
+                        (
+                        new TransactionTag
+                        {
+                            ClientName = dataSource.ClientName,
+                            Tag = tag,
+                            TransactionId = transactionId
+                        }
+                        );
+                }
+                unitOfWork.Save();
+            }
+            return new ActionResponse
+            {
+                Status = ActionResponseCode.Success
+            };
+
         }
     }
 }

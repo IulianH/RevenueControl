@@ -14,6 +14,7 @@ namespace RevenueControl.DataAccess
         IRepository<Client> clientRepository;
         IRepository<DataSource> dataSourceRepository;
         IRepository<Transaction> transactionRepository;
+        IRepository<TransactionTag> transactionTagRepository;
 
 
         public IRepository<Client> ClientRepository
@@ -51,6 +52,19 @@ namespace RevenueControl.DataAccess
                 return transactionRepository;
             }
         }
+
+        public IRepository<TransactionTag> TransactionTagRepository
+        {
+            get
+            {
+                if(transactionTagRepository == null)
+                {
+                    transactionTagRepository = new Repository<TransactionTag>(context);
+                }
+                return transactionTagRepository;
+            }
+        }
+
 
         public void Save()
         {
