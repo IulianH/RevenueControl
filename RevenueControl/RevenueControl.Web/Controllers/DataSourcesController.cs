@@ -32,21 +32,6 @@ namespace RevenueControl.Web.Controllers
             return View(manager.Get(Client));
         }
 
-        // GET: DataSources/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            DataSource dataSource = manager.GetById(id.Value);
-            if (dataSource == null)
-            {
-                return HttpNotFound();
-            }
-            return View(dataSource);
-        }
-
         // GET: DataSources/Create
         public ActionResult Create()
         {

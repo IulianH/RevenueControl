@@ -24,6 +24,9 @@ namespace RevenueControl.Services
             this.fileReader = fileReader;
         }
 
+        public TransactionsManager(IUnitOfWork unitOfWork) : this(unitOfWork, null) { }
+        
+
         private void ValidateTransactionList(IList<Transaction> transactions, DataSource dataSource)
         {
             if (!transactions.Any())

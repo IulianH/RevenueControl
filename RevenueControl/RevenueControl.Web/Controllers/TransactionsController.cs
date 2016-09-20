@@ -1,4 +1,8 @@
-﻿using RevenueControl.DomainObjects.Entities;
+﻿using RevenueControl.DataAccess;
+using RevenueControl.DomainObjects.Entities;
+using RevenueControl.DomainObjects.Interfaces;
+using RevenueControl.Services;
+using RevenueControl.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,107 +13,28 @@ namespace RevenueControl.Web.Controllers
 {
     public class TransactionsController : Controller
     {
-
-        static List<Transaction> _transactions = new List<Transaction>
-        {
-            new Transaction
-            {
-                Amount = 4,
-                OtherDetails ="Details",
-                TransactionDate = new DateTime(2016, 4, 5),
-                TransactionDetails = "Details",
-                TransactionType = TransactionType.Credit
-            },
-            new Transaction
-            {
-                Amount = 6,
-                OtherDetails ="Details",
-                TransactionDate = new DateTime(2016, 4, 5),
-                TransactionDetails = "Details",
-                TransactionType = TransactionType.Debit
-            }
-        };
-
+        IDataSourceManager dataSourceManager = new DataSourceManager(new UnitOfWork());
+        ITransactionManager transactionManager = new TransactionsManager(new UnitOfWork()); 
 
         // GET: Transactions
-        public ActionResult Index()
+        public ActionResult Index([Bind(Prefix = "id")] int dataSourceId)
         {
-            var model = from t in _transactions
-                        orderby t.Amount
-                        select t;
+            DataSource dataSource = dataSourceManager.GetById(dataSourceId);
+            IEnumerable<Transaction> transactions = transactionManager.Get(dataSource);
+
+            var model = new TransactionsViewModel
+            {
+                DataSource = string.IsNullOrWhiteSpace(dataSource.ClientName) ? dataSource.BankAccount : dataSource.ClientName + " - " + dataSource.BankAccount,
+                Transactions = transactions
+            };
+
             return View(model);
         }
-
-        // GET: Transactions/Details/5
-        public ActionResult Details(int id)
+        protected override void Dispose(bool disposing)
         {
-            return View();
+            transactionManager.Dispose();
+            base.Dispose(disposing);
         }
 
-        // GET: Transactions/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Transactions/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Transactions/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Transactions/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Transactions/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Transactions/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
