@@ -10,6 +10,7 @@ using RevenueControl.DataAccess;
 using RevenueControl.DomainObjects.Entities;
 using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.Services;
+using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
@@ -17,19 +18,12 @@ namespace RevenueControl.Web.Controllers
     {
        
         private IDataSourceManager manager = new DataSourceManager(new UnitOfWork());
-        private Client Client
-        {
-            get
-            {
-                return new Client {Name = "DefaultClient" };
-            }
-        }
-
+        private IRevenueControlContext Context = new RevenueControlContext();
 
         // GET: DataSources
         public ActionResult Index()
         {
-            return View(manager.Get(Client));
+            return View(manager.Get(Context.LoggedInClient));
         }
 
         // GET: DataSources/Create
@@ -43,10 +37,11 @@ namespace RevenueControl.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,BankAccount,Name,Culture,ClientName")] DataSource dataSource)
+        public ActionResult Create([Bind(Include = "BankAccount,Name,Culture")] DataSource dataSource)
         {
             if (ModelState.IsValid)
             {
+                dataSource.ClientName = Context.LoggedInClient;
                 manager.Insert(dataSource);
                 return RedirectToAction("Index");
             }
@@ -61,7 +56,7 @@ namespace RevenueControl.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DataSource dataSource = manager.GetById(id.Value);
+            DataSource dataSource = manager.GetById(id.Value, Context.LoggedInClient);
             if (dataSource == null)
             {
                 return HttpNotFound();
@@ -74,10 +69,11 @@ namespace RevenueControl.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,BankAccount,Name,Culture,ClientName")] DataSource dataSource)
+        public ActionResult Edit([Bind(Include = "Id,BankAccount,Name,Culture")] DataSource dataSource)
         {
             if (ModelState.IsValid)
             {
+                dataSource.ClientName = Context.LoggedInClient;
                 manager.Update(dataSource);
                 return RedirectToAction("Index");
             }
@@ -91,7 +87,7 @@ namespace RevenueControl.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DataSource dataSource = manager.GetById(id.Value);
+            DataSource dataSource = manager.GetById(id.Value, Context.LoggedInClient);
             if (dataSource == null)
             {
                 return HttpNotFound();
@@ -104,7 +100,7 @@ namespace RevenueControl.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            DataSource dataSource = manager.GetById(id);
+            DataSource dataSource = manager.GetById(id, Context.LoggedInClient);
             manager.Delete(dataSource); 
             return RedirectToAction("Index");
         }

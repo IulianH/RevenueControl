@@ -11,11 +11,11 @@ namespace RevenueControl.DomainObjects.Interfaces
     {
         ActionResponse Insert(DataSource dataSource);
 
-        IList<DataSource> Get(Client client, string searchTerm = null);
+        IList<DataSource> Get(string clientName, string searchTerm = null);
 
         bool HasTransactions(DataSource dataSource);
 
-        DataSource GetById(int id);
+        DataSource GetById(int id, string clientName);
 
         ActionResponse Delete(DataSource dataSource);
 

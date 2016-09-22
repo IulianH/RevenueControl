@@ -118,7 +118,7 @@ namespace RevenueControl.Tests.Integration.Services
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
-                return dsManager.Get(Client, searchTerm);
+                return dsManager.Get(c_clientName, searchTerm);
             }
         }
 
@@ -147,12 +147,6 @@ namespace RevenueControl.Tests.Integration.Services
         }
 
         [TestMethod]
-        public void Smth()
-        {
-            IList<Transaction> trans = GetAllTransactions(new DataSource {Id = 1 });
-        }
-
-        [TestMethod]
         public void TransactionServiceIntegrationTest()
         {
             try
@@ -170,6 +164,7 @@ namespace RevenueControl.Tests.Integration.Services
                 Assert.IsFalse(HasTransactions(dataSource));
                 IList<DataSource> dsList = SearchDataSource(ds1Name.Substring(1, 7).ToLower());
                 Assert.IsTrue(dsList.Count == 1);
+                Assert.IsTrue(dsList[0].GetType() == typeof(DataSource));
                 dataSource = dsList[0];
                 Assert.IsTrue(dataSource.Name == ds1Name);
                 Assert.IsTrue(dataSource.BankAccount == ds1BankAccount);

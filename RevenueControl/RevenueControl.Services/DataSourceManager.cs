@@ -75,17 +75,17 @@ namespace RevenueControl.Services
            unitOfWork.Dispose();
         }
 
-        public IList<DataSource> Get(Client client, string searchTerm = null)
+        public IList<DataSource> Get(string clientName, string searchTerm = null)
         {
             IList<DataSource> toReturn;
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == client.Name).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == clientName).ToArray();
             }
             else
             {
                 string toSearch = searchTerm.Trim();
-                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == client.Name && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch))));
+                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == clientName && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch))));
             }
             return toReturn;
         }
@@ -96,7 +96,7 @@ namespace RevenueControl.Services
             return transactions.Count > 0;
         }
 
-        public DataSource GetById(int id)
+        public DataSource GetById(int id, string clientName)
         {
             return unitOfWork.DataSourceRepository.GetById(id);
         }

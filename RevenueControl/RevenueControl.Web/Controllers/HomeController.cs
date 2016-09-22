@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using RevenueControl.DomainObjects.Entities;
+using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
@@ -14,9 +15,11 @@ namespace RevenueControl.Web.Controllers
     {
 
         IDataSourceManager _repo = new DataSourceManager(new UnitOfWork());
+        IRevenueControlContext Context = new RevenueControlContext();
+
         public ActionResult Index(string searchTerm = null)
         {
-            var model = _repo.Get(new ClientManager(new UnitOfWork()).GetById("DefaultClient"), searchTerm);
+            var model = _repo.Get(Context.LoggedInClient, searchTerm);
 
             return View(model);
         }
