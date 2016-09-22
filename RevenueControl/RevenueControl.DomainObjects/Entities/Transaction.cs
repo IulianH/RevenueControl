@@ -31,6 +31,8 @@ namespace RevenueControl.DomainObjects.Entities
 
         public ICollection<string> Tags { get; set; }
 
+        public bool Ignore { get; set; }
+
         private bool Equals(Transaction other)
         {
             return TransactionDate == other.TransactionDate 
