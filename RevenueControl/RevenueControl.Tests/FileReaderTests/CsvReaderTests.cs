@@ -120,5 +120,25 @@ namespace RevenueControl.Tests.FileReaderTests
             TestMethodRoFile(new GenericCsvReader());
         }
 
+        [TestMethod]
+        public void NoCommaAtStartFile()
+        {
+            // Arrange
+            const string resourceFile = "RO75INGB0000999901728780.csv";
+            GenericCsvReader reader = new GenericCsvReader();
+
+            //Act
+            IList<Transaction> transactions = reader.Read(GlobalSettings.GetResourceFilePath(resourceFile), new System.Globalization.CultureInfo("en-US"));
+
+            //Assert
+            Assert.IsTrue(transactions.Count == 2);
+            Transaction transaction = transactions[1];
+            Assert.IsTrue(transaction.TransactionDate == new DateTime(2016, 9, 21));
+            Assert.IsTrue(transaction.TransactionType == TransactionType.Debit);
+            Assert.IsTrue(transaction.Amount == 70.50m);
+            Assert.IsTrue(transaction.TransactionDetails == "POS purchase");
+            Assert.IsTrue(transaction.OtherDetails.Contains("043740"));
+        }
+
     }
 }

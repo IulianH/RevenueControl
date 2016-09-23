@@ -16,17 +16,15 @@ namespace RevenueControl.DomainObjects
         NotFound
     }
 
-    public class ParametrizedActionResponse<T>
-    {
-        public ActionResponseCode Status { get; set; }
-        public string ActionResponseMessage { get; set; }
-        public T Result { get; set; }
-    }
-
-
     public class ActionResponse
     {
         public ActionResponseCode Status { get; set; }
         public string ActionResponseMessage { get; set; }
     }
+
+    public class ParametrizedActionResponse<T> : ActionResponse
+    {
+        public T Result { get; set; }
+    }
+
 }

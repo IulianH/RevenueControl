@@ -27,7 +27,8 @@ namespace RevenueControl.Web.Controllers
             var model = new TransactionsViewModel
             {
                 DataSource = string.IsNullOrWhiteSpace(dataSource.ClientName) ? dataSource.BankAccount : dataSource.ClientName + " - " + dataSource.BankAccount,
-                Transactions = transactions
+                Transactions = transactions,
+                DataSourceId = dataSource.Id
             };
 
             return View(model);

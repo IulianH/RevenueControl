@@ -67,13 +67,17 @@ namespace RevenueControl.InquiryFileReaders.Csv
                     {
 
                         int transactionDateIndex = GetIndexOfKey(transactionDateKeys, reader.FieldHeaders, culture);
+                        
                         if (transactionDateIndex > -1)
                         {
+                            //stupid bug in ING
+                            bool noOffset = (transactionDateIndex == 0 || debitIndex == 0 || creditIndex == 0 || transactionDetailsIndex == 0);
+
                             returnVal = new HybridDictionary();
-                            returnVal["Debit"] = debitIndex - 1;
-                            returnVal["Credit"] = creditIndex - 1;
-                            returnVal["TransactionDetails"] = transactionDetailsIndex - 1;
-                            returnVal["Date"] = transactionDateIndex - 1;
+                            returnVal["Debit"] = noOffset ? debitIndex : debitIndex - 1;
+                            returnVal["Credit"] = noOffset ? creditIndex : creditIndex - 1;
+                            returnVal["TransactionDetails"] = noOffset ? transactionDetailsIndex : transactionDetailsIndex - 1;
+                            returnVal["Date"] = noOffset ? transactionDateIndex : transactionDateIndex - 1;
                         }
                         else
                         {

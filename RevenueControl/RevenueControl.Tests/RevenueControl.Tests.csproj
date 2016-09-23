@@ -80,6 +80,9 @@
     <None Include="Resources\Inquiry_statements.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\RO75INGB0000999901728780.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Tranzactii_pe_perioada.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -8,4 +8,5 @@
 @Html.Partial("_Transactions", @Model.Transactions)
 <p>
     @Html.ActionLink("Upload", "Create")
+    @Html.ActionLink("Upload more transactions", "Index", "TransactionUpload", new { id = Model.DataSourceId }, null)
 </p>
