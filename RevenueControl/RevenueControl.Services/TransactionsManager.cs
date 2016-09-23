@@ -69,25 +69,36 @@ namespace RevenueControl.Services
                     transactionsFromFile = fileReader.Read(transactionReportFile, period, culture);
                 }
 
+                //removing any duplicates
+                HashSet<Transaction> transactionHash = new HashSet<Transaction>();
+                foreach(Transaction transaction in transactionsFromFile)
+                {
+                    while (transactionHash.Contains(transaction))
+                    {
+                        transaction.TransactionDate = transaction.TransactionDate.AddSeconds(1);
+                    }
+                    transactionHash.Add(transaction);
+                }
+                
+
                 if (transactionsFromFile.Count > 0)
                 {
                     Period selectedPeriod = new Period(transactionsFromFile[0].TransactionDate, transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
-                    HashSet<int> indexesToRemove = new HashSet<int>();
-                    foreach (Transaction dbTransaction in unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate))
+                    IList<Transaction> dbTransactions = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate);
+                    foreach (Transaction dbTransaction in dbTransactions)
                     {
-                        int idx = transactionsFromFile.IndexOf(dbTransaction);
-                        if (idx > -1)
+                        if(transactionHash.Contains(dbTransaction))
                         {
-                            indexesToRemove.Add(idx);
+                            transactionHash.Remove(dbTransaction);
                         }
                     }
-                    foreach(Transaction transaction in transactionsFromFile.Where((transaction, index) => !indexesToRemove.Contains(index)))
+                    foreach(Transaction transaction in transactionsFromFile.Where(transaction => transactionHash.Contains(transaction)))
                     {
                         transaction.DataSourceId = repoDataSource.Id;
                         unitOfWork.TransactionRepository.Insert(transaction);
                     }
                     unitOfWork.Save();
-                    ret.Result = transactionsFromFile.Count - indexesToRemove.Count;
+                    ret.Result = transactionHash.Count;
                     ret.Status = ActionResponseCode.Success;
                 }
                 else

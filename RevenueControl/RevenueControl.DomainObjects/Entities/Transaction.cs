@@ -85,6 +85,7 @@ namespace RevenueControl.DomainObjects.Entities
    
         public override int GetHashCode()
         {
+            //do not store the hashcode in a variable, it must be dynamic
             return string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}{4}", this.TransactionDate.Year, TransactionDate.Month, TransactionDate.Day, TransactionDetails, Amount).GetHashCode();
         }
     }
