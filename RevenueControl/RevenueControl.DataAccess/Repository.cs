@@ -27,7 +27,7 @@ namespace RevenueControl.DataAccess
                 dbSet.Attach(entity);
             }
             context.Entry(entity).State = EntityState.Unchanged;
-            context.Set<T>().Remove(entity);
+            dbSet.Remove(entity);
         }
 
         public void Insert(T entity)
@@ -42,43 +42,6 @@ namespace RevenueControl.DataAccess
                 dbSet.Attach(entity);
             }
             context.Entry(entity).State = EntityState.Modified; 
-        }
-         
-        public IList<T> Get(Expression<Func<T, bool>> filter = null,
-           Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-           string includeProperties = "", int take = 0)
-        {
-            IList<T> returnValue = null;
-            IQueryable<T> query = dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            if (!string.IsNullOrWhiteSpace(includeProperties))
-            {
-                foreach (var includeProperty in includeProperties.Split
-                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeProperty);
-                }
-            }
-
-            if(take > 0)
-            {
-                query = query.Take(take);
-            }
-
-            if (orderBy != null)
-            {
-                returnValue = orderBy(query).ToList();
-            }
-            else
-            {
-                returnValue = query.ToList();
-            }
-            return returnValue;
         }
 
         public T GetById(params object[] keys)

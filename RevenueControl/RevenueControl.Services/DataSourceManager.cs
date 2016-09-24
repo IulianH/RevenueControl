@@ -22,7 +22,8 @@ namespace RevenueControl.Services
         private bool ValidateDataSource(DataSource dataSource)
         {
             bool returnValue;
-            if(!string.IsNullOrWhiteSpace(dataSource.BankAccount) && !string.IsNullOrWhiteSpace(dataSource.Culture))
+
+            if(!string.IsNullOrWhiteSpace(dataSource.BankAccount) && !string.IsNullOrWhiteSpace(dataSource.Culture) && !string.IsNullOrWhiteSpace(dataSource.ClientName))
             {
                 try
                 {
@@ -52,7 +53,7 @@ namespace RevenueControl.Services
                 {
                     dataSource.Name = dataSource.Name.Trim();
                 }
-                if(unitOfWork.DataSourceRepository.Get(ds => ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
+                if(unitOfWork.DataSourceRepository.Set.Where(ds => ds.ClientName == dataSource.ClientName && ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper()).SingleOrDefault() == null)
                 {
                     unitOfWork.DataSourceRepository.Insert(dataSource);
                     unitOfWork.Save();
@@ -80,20 +81,21 @@ namespace RevenueControl.Services
             IList<DataSource> toReturn;
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == clientName).ToArray();
+                toReturn = unitOfWork.DataSourceRepository.Set.Where(ds => ds.ClientName == clientName).ToArray();
             }
             else
             {
                 string toSearch = searchTerm.Trim();
-                toReturn = unitOfWork.DataSourceRepository.Get(ds => ds.ClientName == clientName && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch))));
+                toReturn = unitOfWork.DataSourceRepository.Set
+                    .Where(ds => ds.ClientName == clientName && (ds.BankAccount.Contains(toSearch) || (ds.Name != null && ds.Name.Contains(toSearch)))).ToArray();
             }
             return toReturn;
         }
 
         public bool HasTransactions(DataSource dataSource)
         {
-            IList<Transaction> transactions = unitOfWork.TransactionRepository.Get(filter: tr => tr.DataSourceId == dataSource.Id, take: 1).ToList();
-            return transactions.Count > 0;
+            Transaction transaction = unitOfWork.TransactionRepository.Set.Where(tr => tr.DataSourceId == dataSource.Id).Take(1).SingleOrDefault();
+            return transaction != null;
         }
 
         public DataSource GetById(int id, string clientName)

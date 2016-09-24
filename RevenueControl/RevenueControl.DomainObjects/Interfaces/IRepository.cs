@@ -12,9 +12,9 @@ namespace RevenueControl.DomainObjects.Interfaces
         void Insert(T entity);
         void Delete(T entity);
         void Update(T entity);
-        IList<T> Get(Expression<Func<T, bool>> filter = null,
+        /*IList<T> Get(Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            string includeProperties = "", int take = 0);
+            string includeProperties = "", int take = 0);*/
         T GetById(params object[] keys);
         IQueryable<T> Set { get; }
     }

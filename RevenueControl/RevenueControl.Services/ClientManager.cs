@@ -80,14 +80,14 @@ namespace RevenueControl.Services
 
         public bool HasDataSources(Client client)
         {
-            IList<DataSource> dataSources = unitOfWork.DataSourceRepository.Get(filter: ds => ds.ClientName.ToUpper() == client.Name.ToUpper(), take: 1).ToList();
-            return dataSources.Count > 0;
+            DataSource dataSource = unitOfWork.DataSourceRepository.Set.Where(ds => ds.ClientName.ToUpper() == client.Name.ToUpper()).Take(1).SingleOrDefault();
+            return dataSource != null; 
         }
 
         public IList<Client> Get()
         {
             IList<Client> returnValue = null;
-            returnValue = unitOfWork.ClientRepository.Get();
+            returnValue = unitOfWork.ClientRepository.Set.ToArray();
             return returnValue;
         }
 

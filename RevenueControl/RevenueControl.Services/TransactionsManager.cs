@@ -84,7 +84,8 @@ namespace RevenueControl.Services
                 if (transactionsFromFile.Count > 0)
                 {
                     Period selectedPeriod = new Period(transactionsFromFile[0].TransactionDate, transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
-                    IList<Transaction> dbTransactions = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate);
+                    IList<Transaction> dbTransactions = unitOfWork.TransactionRepository.Set.
+                        Where(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate).ToList();
                     foreach (Transaction dbTransaction in dbTransactions)
                     {
                         if(transactionHash.Contains(dbTransaction))
@@ -127,23 +128,24 @@ namespace RevenueControl.Services
 
         public IList<Transaction> Get(DataSource dataSource, string searchTerm = null)
         {
-            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Get(tr => tr.DataSourceId == dataSource.Id);
+            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Set.Where(tr => tr.DataSourceId == dataSource.Id).ToList();
             foreach(Transaction transaction in returnValue)
             {
-                transaction.Tags = unitOfWork.TransactionTagRepository.Get(tag => tag.TransactionId == transaction.Id).Select(tag => tag.Tag).ToArray();           
+                transaction.Tags = unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transaction.Id).Select(tag => tag.Tag).ToArray();           
             }
             return returnValue;
         }
 
         public IList<Transaction> Get(DataSource dataSource, Period period, string searchTerm = null)
         {
-            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Get(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate);
+            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Set.
+                Where(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray();
             return returnValue;
         }
 
         public ActionResponse TagTransaction(int transactionId, IList<string> tags)
         {
-            IList<string> existingTags = unitOfWork.TransactionTagRepository.Get(tag => tag.TransactionId == transactionId).Select(tag => tag.Tag.ToUpper()).ToArray();
+            IList<string> existingTags = unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transactionId).Select(tag => tag.Tag.ToUpper()).ToArray();
             IList<string> toAddTags = tags.Where(tag => !string.IsNullOrWhiteSpace(tag) && !existingTags.Contains(tag.ToUpper())).Select(tag => tag.Trim()).ToArray();
             if (toAddTags.Count > 0)
             { 
