@@ -8,9 +8,9 @@ using RevenueControl.DomainObjects.Entities;
 using System.Globalization;
 using System.Collections.Specialized;
 using CsvHelper;
-using RevenueControl.Resources;
 using RevenueControl.DomainObjects;
 using System.IO;
+using RevenueControl.Resource;
 
 namespace RevenueControl.InquiryFileReaders.Csv
 {
@@ -33,7 +33,7 @@ namespace RevenueControl.InquiryFileReaders.Csv
         static int GetIndexOfKey(string[] keys, string[] headers, CultureInfo culture)
         {
             var header = headers.Select((h, index) => new { header = h, index = index })
-                .FirstOrDefault(h => keys.Select(key => Localization.GetResource(key, culture)).Any(resource => string.Compare(h.header, resource, true, culture) == 0));
+                .FirstOrDefault(h => keys.Select(key => Resources.ResourceManager.GetString(key, culture)).Any(resource => string.Compare(h.header, resource, true, culture) == 0));
             return header == null ? -1 : header.index;
         }
 

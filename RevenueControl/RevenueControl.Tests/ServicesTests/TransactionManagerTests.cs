@@ -7,10 +7,10 @@ using RevenueControl.InquiryFileReaders.Csv;
 using System.Collections.Generic;
 using RevenueControl.Services;
 using RevenueControl.DomainObjects;
-using RevenueControl.Resources;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using RevenueControl.Resource;
 
 namespace RevenueControl.Tests.ServicesTests
 {
@@ -126,7 +126,7 @@ namespace RevenueControl.Tests.ServicesTests
             // Assert
             Assert.IsTrue(response.Status == ActionResponseCode.NoActionPerformed);
             moqTrRepo.Verify(inst => inst.Insert(It.IsAny<Transaction>()), Times.Never);
-            Assert.IsTrue(response.ActionResponseMessage == Localization.GetZeroTransactionsInFile(new CultureInfo(cultureStr)));
+            Assert.IsTrue(response.ActionResponseMessage == Resources.ZeroTransactionsInFile);
             moqDsRepo.Verify(inst => inst.GetById(It.Is<int>(id => id == dataSourceId)), Times.AtLeastOnce);
         }
 

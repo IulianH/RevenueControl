@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RevenueControl.Resources {
+namespace RevenueControl.Resource {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace RevenueControl.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace RevenueControl.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RevenueControl.Resources.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RevenueControl.Resource.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace RevenueControl.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace RevenueControl.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Credit.
         /// </summary>
-        internal static string Credit {
+        public static string Credit {
             get {
                 return ResourceManager.GetString("Credit", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace RevenueControl.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Date.
         /// </summary>
-        internal static string Date {
+        public static string Date {
             get {
                 return ResourceManager.GetString("Date", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace RevenueControl.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Debit.
         /// </summary>
-        internal static string Debit {
+        public static string Debit {
             get {
                 return ResourceManager.GetString("Debit", resourceCulture);
             }
@@ -90,16 +90,34 @@ namespace RevenueControl.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Transaction Details.
         /// </summary>
-        internal static string TransactionDetails {
+        public static string TransactionDetails {
             get {
                 return ResourceManager.GetString("TransactionDetails", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} transactions added.
+        /// </summary>
+        public static string TransactionsAdded {
+            get {
+                return ResourceManager.GetString("TransactionsAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All the transactions you are trying to add already exist in the database.
+        /// </summary>
+        public static string ZeroTransactionsAdded {
+            get {
+                return ResourceManager.GetString("ZeroTransactionsAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file doesn&apos;t contain any transaction.
         /// </summary>
-        internal static string ZeroTransactionsInFile {
+        public static string ZeroTransactionsInFile {
             get {
                 return ResourceManager.GetString("ZeroTransactionsInFile", resourceCulture);
             }

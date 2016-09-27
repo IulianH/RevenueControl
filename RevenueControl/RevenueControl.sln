@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.InquiryFileR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Tests", "RevenueControl.Tests\RevenueControl.Tests.csproj", "{DBED7C51-6918-4BD0-98C0-E89DDE9ECDC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Resources", "RevenueControl.Resources\RevenueControl.Resources.csproj", "{4703C16B-10FD-49BC-9D46-2F33EAACCF03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Resource", "RevenueControl.Resources\RevenueControl.Resource.csproj", "{4703C16B-10FD-49BC-9D46-2F33EAACCF03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueControl.Services", "RevenueControl.Services\RevenueControl.Services.csproj", "{D7453F7E-DDC6-4300-B999-0136505CFF36}"
 EndProject

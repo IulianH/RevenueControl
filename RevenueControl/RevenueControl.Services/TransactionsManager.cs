@@ -2,7 +2,7 @@
 using RevenueControl.DomainObjects.Entities;
 using RevenueControl.DomainObjects.Exceptions;
 using RevenueControl.DomainObjects.Interfaces;
-using RevenueControl.Resources;
+using RevenueControl.Resource;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -105,7 +105,7 @@ namespace RevenueControl.Services
                 else
                 {
                     ret.Status = ActionResponseCode.NoActionPerformed;
-                    ret.ActionResponseMessage = Localization.GetZeroTransactionsInFile(culture);
+                    ret.ActionResponseMessage = Resources.ZeroTransactionsInFile;
                 }
             }
             else

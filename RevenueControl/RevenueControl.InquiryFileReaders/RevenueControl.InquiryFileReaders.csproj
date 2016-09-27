@@ -56,9 +56,9 @@
       <Project>{8e793a94-fb7d-4f07-9d2f-b243d48637e1}</Project>
       <Name>RevenueControl.DomainObjects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RevenueControl.Resources\RevenueControl.Resources.csproj">
+    <ProjectReference Include="..\RevenueControl.Resources\RevenueControl.Resource.csproj">
       <Project>{4703c16b-10fd-49bc-9d46-2f33eaaccf03}</Project>
-      <Name>RevenueControl.Resources</Name>
+      <Name>RevenueControl.Resource</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

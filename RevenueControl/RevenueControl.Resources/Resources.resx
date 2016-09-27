@@ -129,6 +129,12 @@
   <data name="TransactionDetails" xml:space="preserve">
     <value>Transaction Details</value>
   </data>
+  <data name="TransactionsAdded" xml:space="preserve">
+    <value>{0} transactions added</value>
+  </data>
+  <data name="ZeroTransactionsAdded" xml:space="preserve">
+    <value>All the transactions you are trying to add already exist in the database</value>
+  </data>
   <data name="ZeroTransactionsInFile" xml:space="preserve">
     <value>The file doesn't contain any transaction</value>
   </data>

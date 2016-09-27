@@ -10,7 +10,7 @@ using CsvHelper;
 using RevenueControl.DomainObjects;
 using System.IO;
 using System.Collections.Specialized;
-using RevenueControl.Resources;
+using RevenueControl.Resource;
 
 namespace RevenueControl.InquiryFileReaders.Csv.Ing
 {
@@ -25,10 +25,11 @@ namespace RevenueControl.InquiryFileReaders.Csv.Ing
         HybridDictionary CreateColumnMaps(CsvReader reader, CultureInfo culture)
         {
             HybridDictionary returnValue = new HybridDictionary();
-            string date = Localization.GetDate(culture);
-            string transactionDetails = Localization.GetTransactionDetails(culture);
-            string debit = Localization.GetDebit(culture);
-            string credit = Localization.GetCredit(culture);
+            string date =Resources.ResourceManager.GetString("Date", culture);
+            string transactionDetails = Resources.ResourceManager.GetString("TransactionDetails", culture);
+            string debit = Resources.ResourceManager.GetString("Debit", culture);
+
+            string credit = Resources.ResourceManager.GetString("Credit", culture);
             string[] headers = reader.FieldHeaders;
             for (int i = 0; i < headers.Length; i++)
             {
