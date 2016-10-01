@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/themes/base/css")
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -30,6 +31,21 @@
         </div>
     </div>
 </div>
+<div>
+    @if (TempData["Success"] != null)
+    {
+        <span class="successMessage">@TempData["Success"]</span>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <span class="errorMessage">@TempData["Error"]</span>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <span class="errorMessage">@TempData["Warning"]</span>
+    }
+</div>
 <div class="container body-content">
     @RenderBody()
     <hr/>
@@ -38,7 +54,7 @@
     </footer>
 </div>
 
-@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/revctrl")
 @Scripts.Render("~/bundles/bootstrap")
 @RenderSection("scripts", false)
 </body>

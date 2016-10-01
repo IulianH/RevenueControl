@@ -1,24 +1,22 @@
-﻿@model IEnumerable<RevenueControl.DomainObjects.Entities.DataSource>
+﻿@model IEnumerable<DataSource>
 @{
     ViewBag.Title = "Home Page";
 }
-<form method="get">
+@*<form method="get">
     <input type="search" name="searchTerm"/>
     <input type="submit" value="Search By Name"/>
-</form>
-@foreach (var item in Model)
+</form>*@
+
+@using (Ajax.BeginForm(
+                new AjaxOptions
+                {
+                    HttpMethod = "get",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = "dataSourceList"
+                }))
 {
-    var itemName = string.Empty;
-    if (!string.IsNullOrWhiteSpace(item.Name))
-    {
-        itemName = item.Name + " - " + item.BankAccount;
-    }
-    else
-    {
-        itemName = item.BankAccount;
-    }
-    <div>
-        <h4>@itemName</h4>
-        <hr/>
-    </div>
+    <input type="search" name="searchTerm" />
+    <input type="submit" value="Search" />
 }
+
+@Html.Partial("_DataSources", Model)

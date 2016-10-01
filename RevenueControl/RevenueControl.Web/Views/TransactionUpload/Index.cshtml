@@ -2,17 +2,9 @@
     ViewBag.Title = "Index";
 }
 
-@if (TempData["Success"] != null)
-{
-    <span class="successMessage">@TempData["Success"]</span>
-}
 
-@if (TempData["Error"] != null)
-{
-    <span class="errorMessage">@TempData["Error"]</span>
-}
 
-@using (Html.BeginForm("Upload", "TransactionUpload", FormMethod.Post, new {enctype = "multipart/form-data"}))
+@using (Html.BeginForm("Upload", "TransactionUpload", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.Hidden("Id")

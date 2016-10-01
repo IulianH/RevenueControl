@@ -10,11 +10,10 @@ namespace RevenueControl.Web.Controllers
 {
     public class TransactionUploadController : BaseController
     {
-        private readonly IRevenueControlContext Context = new RevenueControlContext();
-        private readonly IDataSourceManager dataSourceManager = new DataSourceManager(new UnitOfWork());
-
-        private readonly ITransactionManager transactionManager = new TransactionsManager(new UnitOfWork(),
+        private readonly IDataSourceManager _dataSourceManager = new DataSourceManager(new UnitOfWork());
+        private readonly ITransactionManager _transactionManager = new TransactionsManager(new UnitOfWork(),
             new GenericCsvReader());
+
 
         // GET: TransactionUpload
         public ActionResult Index([Bind(Prefix = "id")] int dataSourceId)
@@ -35,8 +34,8 @@ namespace RevenueControl.Web.Controllers
                     var fileName = Path.GetFileName(file.FileName);
                     var path = Path.Combine(Server.MapPath("~/UploadedContent/"), fileName);
                     file.SaveAs(path);
-                    var dataSource = dataSourceManager.GetById(dataSourceId, Context.LoggedInClient);
-                    var response = transactionManager.Insert(dataSource, path);
+                    var dataSource = _dataSourceManager.GetById(dataSourceId, _context.LoggedInClient);
+                    var response = _transactionManager.Insert(dataSource, path);
                     HandleResponse(response);
                 }
             }
@@ -45,8 +44,8 @@ namespace RevenueControl.Web.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            transactionManager.Dispose();
-            dataSourceManager.Dispose();
+            _transactionManager.Dispose();
+            _dataSourceManager.Dispose();
             base.Dispose(disposing);
         }
     }

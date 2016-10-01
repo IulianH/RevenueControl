@@ -117,6 +117,16 @@ namespace RevenueControl.Services
             return returnValue;
         }
 
+        public IList<Transaction> GetAll(DataSource dataSource, string searchTerm = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<Transaction> GetAll(DataSource dataSource, Period period, string searchTerm = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public ActionResponse TagTransaction(int transactionId, IList<string> tags)
         {
             IList<string> existingTags =

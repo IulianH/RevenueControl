@@ -8,16 +8,15 @@ using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
-    public class DataSourcesController : Controller
+    public class DataSourcesController : BaseController
     {
-        private readonly IRevenueControlContext Context = new RevenueControlContext();
 
         private readonly IDataSourceManager manager = new DataSourceManager(new UnitOfWork());
 
         // GET: DataSources
         public ActionResult Index()
         {
-            return View(manager.Get(Context.LoggedInClient));
+            return View(manager.Get(_context.LoggedInClient));
         }
 
         // GET: DataSources/Create
@@ -35,7 +34,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                dataSource.ClientName = Context.LoggedInClient;
+                dataSource.ClientName = _context.LoggedInClient;
                 manager.Insert(dataSource);
                 return RedirectToAction("Index");
             }
@@ -48,7 +47,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var dataSource = manager.GetById(id.Value, Context.LoggedInClient);
+            var dataSource = manager.GetById(id.Value, _context.LoggedInClient);
             if (dataSource == null)
                 return HttpNotFound();
             return View(dataSource);
@@ -63,7 +62,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                dataSource.ClientName = Context.LoggedInClient;
+                dataSource.ClientName = _context.LoggedInClient;
                 manager.Update(dataSource);
                 return RedirectToAction("Index");
             }
@@ -75,7 +74,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var dataSource = manager.GetById(id.Value, Context.LoggedInClient);
+            var dataSource = manager.GetById(id.Value, _context.LoggedInClient);
             if (dataSource == null)
                 return HttpNotFound();
             return View(dataSource);
@@ -87,7 +86,7 @@ namespace RevenueControl.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var dataSource = manager.GetById(id, Context.LoggedInClient);
+            var dataSource = manager.GetById(id, _context.LoggedInClient);
             manager.Delete(dataSource);
             return RedirectToAction("Index");
         }

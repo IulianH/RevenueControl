@@ -42,7 +42,6 @@ namespace RevenueControl.InquiryFileReaders.Csv
             {
                 using (var reader = new CsvReader(sr))
                 {
-                    var counter = 0;
                     HybridDictionary maps = null;
 
                     while (reader.Read())
@@ -52,7 +51,6 @@ namespace RevenueControl.InquiryFileReaders.Csv
                             var failReason = FailReason.None;
                             maps = CreateColumnMaps(reader, culture, out failReason);
                         }
-                        counter++;
                         var fileLine = CreateFileLine(reader, maps);
                         if ((fileLine.Date != string.Empty) && (lines.Count > 0))
                         {
