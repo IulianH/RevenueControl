@@ -1,17 +1,14 @@
-﻿using RevenueControl.DomainObjects.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RevenueControl.DomainObjects.Entities;
 
 namespace RevenueControl.DomainObjects.Interfaces
 {
     public interface ITransactionManager : IDisposable
     {
-        ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile);
+        ActionResponse Insert(DataSource dataSource, string transactionReportFile);
 
-        ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile, Period period);
+        ActionResponse Insert(DataSource dataSource, string transactionReportFile, Period period);
 
         IList<Transaction> Get(DataSource dataSource, string searchTerm = null);
 

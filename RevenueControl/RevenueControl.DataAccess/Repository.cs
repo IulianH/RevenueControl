@@ -1,31 +1,24 @@
-﻿using RevenueControl.DomainObjects.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RevenueControl.DomainObjects;
-using System.Linq.Expressions;
-using System.Data.Entity;
+using RevenueControl.DomainObjects.Interfaces;
 
 namespace RevenueControl.DataAccess
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        RevenueControlDb context;
-        DbSet<T> dbSet;
+        private readonly RevenueControlDb context;
+        private readonly DbSet<T> dbSet;
+
         public Repository(RevenueControlDb context)
         {
             this.context = context;
-            this.dbSet = context.Set<T>();
+            dbSet = context.Set<T>();
         }
 
         public void Delete(T entity)
         {
             if (context.Entry(entity).State == EntityState.Detached)
-            {
                 dbSet.Attach(entity);
-            }
             context.Entry(entity).State = EntityState.Unchanged;
             dbSet.Remove(entity);
         }
@@ -38,10 +31,8 @@ namespace RevenueControl.DataAccess
         public void Update(T entity)
         {
             if (context.Entry(entity).State == EntityState.Detached)
-            {
                 dbSet.Attach(entity);
-            }
-            context.Entry(entity).State = EntityState.Modified; 
+            context.Entry(entity).State = EntityState.Modified;
         }
 
         public T GetById(params object[] keys)
@@ -51,11 +42,7 @@ namespace RevenueControl.DataAccess
 
         public IQueryable<T> Set
         {
-            get
-            {
-                return dbSet;
-            }
+            get { return dbSet; }
         }
-
     }
 }

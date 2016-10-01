@@ -1,25 +1,19 @@
-﻿using RevenueControl.DomainObjects.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RevenueControl.DomainObjects.Entities;
-using System.Globalization;
 using System.Collections.Specialized;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using CsvHelper;
 using RevenueControl.DomainObjects;
-using System.IO;
+using RevenueControl.DomainObjects.Entities;
+using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.Resource;
 
 namespace RevenueControl.InquiryFileReaders.Csv
 {
     public class GenericCsvReader : ITransactionFileReader
     {
-        static readonly string[] debitKeys = new string[] { "Debit" };
-        static readonly string[] creditKeys = new string[] { "Credit" };
-        static readonly string[] transactionDetailsKeys = new string[] { "TransactionDetails" };
-        static readonly string[] transactionDateKeys = new string[] { "Date" };
         public enum FailReason
         {
             None = 0,
@@ -30,54 +24,116 @@ namespace RevenueControl.InquiryFileReaders.Csv
             NoTransactionDateColumn = 5
         }
 
-        static int GetIndexOfKey(string[] keys, string[] headers, CultureInfo culture)
+        private static readonly string[] DebitKeys = {"Debit"};
+        private static readonly string[] CreditKeys = {"Credit"};
+        private static readonly string[] TransactionDetailsKeys = {"TransactionDetails"};
+        private static readonly string[] TransactionDateKeys = {"Date"};
+
+        public IList<Transaction> Read(string fileName, CultureInfo culture)
         {
-            var header = headers.Select((h, index) => new { header = h, index = index })
-                .FirstOrDefault(h => keys.Select(key => Resources.ResourceManager.GetString(key, culture)).Any(resource => string.Compare(h.header, resource, true, culture) == 0));
-            return header == null ? -1 : header.index;
+            return Read(fileName, GlobalConstants.MaxPeriod, culture);
+        }
+
+        public IList<Transaction> Read(string fileName, Period period, CultureInfo culture)
+        {
+            var returnValue = new List<Transaction>();
+            var lines = new List<CsvFileLine>();
+            using (var sr = new StreamReader(fileName))
+            {
+                using (var reader = new CsvReader(sr))
+                {
+                    var counter = 0;
+                    HybridDictionary maps = null;
+
+                    while (reader.Read())
+                    {
+                        if (maps == null)
+                        {
+                            var failReason = FailReason.None;
+                            maps = CreateColumnMaps(reader, culture, out failReason);
+                        }
+                        counter++;
+                        var fileLine = CreateFileLine(reader, maps);
+                        if ((fileLine.Date != string.Empty) && (lines.Count > 0))
+                        {
+                            var transaction = GetTransactionFromLines(lines, culture);
+                            if (transaction == null)
+                            {
+                                returnValue = null;
+                                break;
+                            }
+                            returnValue.Add(transaction);
+                            lines.Clear();
+                        }
+                        lines.Add(fileLine);
+                    }
+                }
+                if ((returnValue != null) && (lines.Count > 0))
+                {
+                    var transaction = GetTransactionFromLines(lines, culture);
+                    if (transaction == null)
+                        returnValue = null;
+                    returnValue.Add(transaction);
+                }
+            }
+            return returnValue;
+        }
+
+        private static int GetIndexOfKey(string[] keys, string[] headers, CultureInfo culture)
+        {
+            var header = headers.Select((h, index) => new {header = h, index})
+                .FirstOrDefault(
+                    h =>
+                        keys.Select(key => Resources.ResourceManager.GetString(key, culture))
+                            .Any(resource => string.Compare(h.header, resource, true, culture) == 0));
+            return header?.index ?? -1;
         }
 
 
         internal static CsvFileLine CreateFileLine(CsvReader reader, HybridDictionary maps)
         {
-            string[] currentRecord = reader.CurrentRecord;
-            CsvFileLine returnValue = new CsvFileLine
+            var currentRecord = reader.CurrentRecord;
+            var returnValue = new CsvFileLine
             {
-                CreditValue = currentRecord[(int)maps["Credit"]],
-                Date = currentRecord[(int)maps["Date"]],
-                DebitValue = currentRecord[(int)maps["Debit"]],
-                TransactionDetails = currentRecord[(int)maps["TransactionDetails"]]
+                CreditValue = currentRecord[(int) maps["Credit"]],
+                Date = currentRecord[(int) maps["Date"]],
+                DebitValue = currentRecord[(int) maps["Debit"]],
+                TransactionDetails = currentRecord[(int) maps["TransactionDetails"]]
             };
             return returnValue;
         }
 
 
-        HybridDictionary CreateColumnMaps(CsvReader reader, CultureInfo culture, out FailReason failReson)
+        private static HybridDictionary CreateColumnMaps(ICsvReader reader, CultureInfo culture, out FailReason failReson)
         {
             HybridDictionary returnVal = null;
             failReson = FailReason.None;
-            int debitIndex = GetIndexOfKey(debitKeys, reader.FieldHeaders, culture);
+            var debitIndex = GetIndexOfKey(DebitKeys, reader.FieldHeaders, culture);
             if (debitIndex > -1)
             {
-                int creditIndex = GetIndexOfKey(creditKeys, reader.FieldHeaders, culture);
+                var creditIndex = GetIndexOfKey(CreditKeys, reader.FieldHeaders, culture);
                 if (creditIndex > -1)
                 {
-                    int transactionDetailsIndex = GetIndexOfKey(transactionDetailsKeys, reader.FieldHeaders, culture);
+                    var transactionDetailsIndex = GetIndexOfKey(TransactionDetailsKeys, reader.FieldHeaders, culture);
                     if (transactionDetailsIndex > -1)
                     {
+                        var transactionDateIndex = GetIndexOfKey(TransactionDateKeys, reader.FieldHeaders, culture);
 
-                        int transactionDateIndex = GetIndexOfKey(transactionDateKeys, reader.FieldHeaders, culture);
-                        
                         if (transactionDateIndex > -1)
                         {
                             //stupid bug in ING
-                            bool noOffset = (transactionDateIndex == 0 || debitIndex == 0 || creditIndex == 0 || transactionDetailsIndex == 0);
+                            var noOffset = (transactionDateIndex == 0) || (debitIndex == 0) || (creditIndex == 0) ||
+                                           (transactionDetailsIndex == 0);
 
-                            returnVal = new HybridDictionary();
-                            returnVal["Debit"] = noOffset ? debitIndex : debitIndex - 1;
-                            returnVal["Credit"] = noOffset ? creditIndex : creditIndex - 1;
-                            returnVal["TransactionDetails"] = noOffset ? transactionDetailsIndex : transactionDetailsIndex - 1;
-                            returnVal["Date"] = noOffset ? transactionDateIndex : transactionDateIndex - 1;
+                            returnVal = new HybridDictionary
+                            {
+                                ["Debit"] = noOffset ? debitIndex : debitIndex - 1,
+                                ["Credit"] = noOffset ? creditIndex : creditIndex - 1,
+                                ["TransactionDetails"] = noOffset
+                                    ? transactionDetailsIndex
+                                    : transactionDetailsIndex - 1,
+                                ["Date"] = noOffset ? transactionDateIndex : transactionDateIndex - 1
+                            };
                         }
                         else
                         {
@@ -103,89 +159,53 @@ namespace RevenueControl.InquiryFileReaders.Csv
 
         internal static Transaction GetTransactionFromLines(List<CsvFileLine> lines, CultureInfo culture)
         {
-
             Transaction returnValue = null;
             //validation
-            if (lines.Any(line => line.Date != string.Empty) && lines.All(line => line.TransactionDetails != string.Empty)
-            && lines.Count(line => line.Date != string.Empty && (line.DebitValue != string.Empty || line.CreditValue != string.Empty)) == 1)
+            if (lines.All(line => line.Date == string.Empty) ||
+                lines.Any(line => line.TransactionDetails == string.Empty) || (lines.Count(
+                                                                                    line =>
+                                                                                        (line.Date != string.Empty) &&
+                                                                                        ((line.DebitValue !=
+                                                                                          string.Empty) ||
+                                                                                         (line.CreditValue !=
+                                                                                          string.Empty))) != 1))
+                return null;
+            var mainLine = lines[0];
+            if ((mainLine.DebitValue != string.Empty) ||
+                ((mainLine.CreditValue != string.Empty) &&
+                 !((mainLine.DebitValue != string.Empty) && (mainLine.CreditValue != string.Empty))))
             {
-                CsvFileLine mainLine = lines[0];
-                if (mainLine.DebitValue != string.Empty || mainLine.CreditValue != string.Empty && !(mainLine.DebitValue != string.Empty && mainLine.CreditValue != string.Empty))
-                {
-                    DateTime transactionDate;
-                    TransactionType transactionType = mainLine.DebitValue != string.Empty ? TransactionType.Debit : TransactionType.Credit;
-                    decimal amount;
-                    string amountStr = transactionType == TransactionType.Debit ? mainLine.DebitValue : mainLine.CreditValue;
-                    if (DateTime.TryParse(mainLine.Date, culture, DateTimeStyles.None, out transactionDate) && decimal.TryParse(amountStr, NumberStyles.Currency, culture, out amount))
+                DateTime transactionDate;
+                var transactionType = mainLine.DebitValue != string.Empty
+                    ? TransactionType.Debit
+                    : TransactionType.Credit;
+                decimal amount;
+                var amountStr = transactionType == TransactionType.Debit
+                    ? mainLine.DebitValue
+                    : mainLine.CreditValue;
+                if (DateTime.TryParse(mainLine.Date, culture, DateTimeStyles.None, out transactionDate) &&
+                    decimal.TryParse(amountStr, NumberStyles.Currency, culture, out amount))
+                    if (amount > 0m)
                     {
-
-                        if (amount > 0m)
+                        Func<string[], string[]> sort = s1 =>
                         {
-                            Func<string[], string[]> sort = s1 => { Array.Sort(s1, new TransactionDetailsComparer()); return s1; };
-                            returnValue = new Transaction
-                            {
-                                Amount = amount,
-                                OtherDetails = string.Join(" ", sort(lines.Where(ln => ln != mainLine).Select(ln => ln.TransactionDetails).ToArray())),
-                                TransactionDate = transactionDate,
-                                TransactionDetails = mainLine.TransactionDetails,
-                                TransactionType = transactionType
-                            };
-                        }
-                    }
-                }
-            }
-            return returnValue;
-        }
-
-        public IList<Transaction> Read(string fileName, CultureInfo culture)
-        {
-            return Read(fileName, GlobalConstants.MaxPeriod, culture);
-        }
-
-        public IList<Transaction> Read(string fileName, Period period, CultureInfo culture)
-        {
-
-            List<Transaction> returnValue = new List<Transaction>();
-            List<CsvFileLine> lines = new List<CsvFileLine>();
-            using (var sr = new StreamReader(fileName))
-            {
-                using (CsvReader reader = new CsvReader(sr))
-                {
-                    int counter = 0;
-                    HybridDictionary maps = null;
-
-                    while (reader.Read())
-                    {
-                        if (maps == null)
+                            Array.Sort(s1, new TransactionDetailsComparer());
+                            return s1;
+                        };
+                        returnValue = new Transaction
                         {
-                            FailReason failReason = FailReason.None;
-                            maps = CreateColumnMaps(reader, culture, out failReason);
-                        }
-                        counter++;
-                        CsvFileLine fileLine = CreateFileLine(reader, maps);
-                        if (fileLine.Date != string.Empty && lines.Count > 0)
-                        {
-                            Transaction transaction = GenericCsvReader.GetTransactionFromLines(lines, culture);
-                            if (transaction == null)
-                            {
-                                returnValue = null;
-                                break;
-                            }
-                            returnValue.Add(transaction);
-                            lines.Clear();
-                        }
-                        lines.Add(fileLine);
+                            Amount = amount,
+                            OtherDetails =
+                                string.Join(" ",
+                                    sort(
+                                        lines.Where(ln => ln != mainLine)
+                                            .Select(ln => ln.TransactionDetails)
+                                            .ToArray())),
+                            TransactionDate = transactionDate,
+                            TransactionDetails = mainLine.TransactionDetails,
+                            TransactionType = transactionType
+                        };
                     }
-                }
-                if (returnValue != null && lines.Count > 0)
-                {
-                    Transaction transaction = GenericCsvReader.GetTransactionFromLines(lines, culture);
-                    if (transaction == null)
-                    {
-                        returnValue = null;
-                    }
-                    returnValue.Add(transaction);
-                }
             }
             return returnValue;
         }

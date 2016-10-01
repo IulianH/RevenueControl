@@ -1,26 +1,34 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RevenueControl.DataAccess;
-using System.Linq;
-using RevenueControl.DomainObjects.Interfaces;
-using RevenueControl.Services;
-using RevenueControl.DomainObjects.Entities;
 using RevenueControl.DomainObjects;
-using System.Collections.Generic;
+using RevenueControl.DomainObjects.Entities;
+using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.InquiryFileReaders.Csv;
+using RevenueControl.Services;
 
 namespace RevenueControl.Tests.Integration.Services
 {
     [TestClass]
     public class TransactionServiceIntegration
     {
+        private const string c_clientName = "TestTransactionService";
+        private const string resourceFile = "Tranzactii_pe_perioada.csv";
+        private const string ds1BankAccount = "RO75SMB0000999901728781";
+        private const string ds1Culture = "ro-RO";
+        private const string ds1Name = "Cont Curent";
+        private readonly string[] Tags = {"Tag1", "Tag2"};
 
-        const string c_clientName = "TestTransactionService";
-        const string resourceFile = "Tranzactii_pe_perioada.csv";
-        const string ds1BankAccount = "RO75SMB0000999901728781";
-        const string ds1Culture = "ro-RO";
-        const string ds1Name = "Cont Curent";
-        readonly string[] Tags = new string[] {"Tag1", "Tag2" };
+        private static DataSource Ds1 => new DataSource
+        {
+            BankAccount = ds1BankAccount,
+            ClientName = c_clientName,
+            Culture = ds1Culture,
+            Name = ds1Name
+        };
+
+        private static Client Client => new Client {Name = c_clientName};
 
 
         private bool CreateClient(bool toUpper = false)
@@ -28,7 +36,7 @@ namespace RevenueControl.Tests.Integration.Services
             ActionResponse result;
             using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
             {
-                Client newClient = new Client
+                var newClient = new Client
                 {
                     Name = toUpper ? c_clientName.ToUpper() : c_clientName
                 };
@@ -38,10 +46,9 @@ namespace RevenueControl.Tests.Integration.Services
         }
 
 
-
-        private bool DeleteClient()
+        private static bool DeleteClient()
         {
-            Client client = new Client
+            var client = new Client
             {
                 Name = c_clientName
             };
@@ -49,56 +56,32 @@ namespace RevenueControl.Tests.Integration.Services
             using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
             {
                 clientManager.Delete(client);
-                returnValue = (clientManager.GetById(client.Name) == null);
+                returnValue = clientManager.GetById(client.Name) == null;
             }
             return returnValue;
-        }
-
-        DataSource Ds1
-        {
-            get
-            {
-                return new DataSource
-                {
-                    BankAccount = ds1BankAccount,
-                    ClientName = c_clientName,
-                    Culture = ds1Culture,
-                    Name = ds1Name
-                };
-            }
-
-        }
-
-        Client Client
-        {
-            get
-            {
-                return new Client { Name = c_clientName };
-            }
-            
         }
 
         private DataSource CreateDataSource()
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
-                DataSource ds1 = Ds1;
-                ActionResponse result = dsManager.Insert(ds1);
+                var ds1 = Ds1;
+                var result = dsManager.Insert(ds1);
                 return ds1;
             }
         }
 
-        int LoadTransactions(DataSource dataSource)
+        private void LoadTransactions(DataSource dataSource)
         {
             ITransactionFileReader fileReader = new GenericCsvReader();
-           
+
             using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), fileReader))
             {
-                return trManager.Insert(dataSource, GlobalSettings.GetResourceFilePath(resourceFile)).Result;
+                trManager.Insert(dataSource, GlobalSettings.GetResourceFilePath(resourceFile));
             }
         }
 
-        IList<Transaction> GetAllTransactions(DataSource dataSource)
+        private IList<Transaction> GetAllTransactions(DataSource dataSource)
         {
             using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), null))
             {
@@ -106,7 +89,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
-        bool TagTransaction(Transaction transaction)
+        private bool TagTransaction(Transaction transaction)
         {
             using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), null))
             {
@@ -114,7 +97,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
-        IList<DataSource> SearchDataSource(string searchTerm)
+        private IList<DataSource> SearchDataSource(string searchTerm)
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
@@ -122,7 +105,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
-        bool HasDataSources()
+        private bool HasDataSources()
         {
             using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
             {
@@ -130,7 +113,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
-        bool HasTransactions(DataSource dataSource)
+        private bool HasTransactions(DataSource dataSource)
         {
             using (IDataSourceManager dsManager = new DataSourceManager(new UnitOfWork()))
             {
@@ -138,7 +121,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
-        Client GetClientById()
+        private Client GetClientById()
         {
             using (IClientManager clientManager = new ClientManager(new UnitOfWork()))
             {
@@ -157,24 +140,23 @@ namespace RevenueControl.Tests.Integration.Services
                 Assert.IsFalse(CreateClient(true));
                 var client = GetClientById();
                 Assert.IsTrue(client != null);
-                DataSource dataSource = CreateDataSource();
+                var dataSource = CreateDataSource();
                 Assert.IsTrue(dataSource != null);
                 Assert.IsTrue(HasDataSources());
                 Assert.IsTrue(dataSource.Id > 0);
                 Assert.IsFalse(HasTransactions(dataSource));
-                IList<DataSource> dsList = SearchDataSource(ds1Name.Substring(1, 7).ToLower());
+                var dsList = SearchDataSource(ds1Name.Substring(1, 7).ToLower());
                 Assert.IsTrue(dsList.Count == 1);
                 Assert.IsTrue(dsList[0].GetType() == typeof(DataSource));
                 dataSource = dsList[0];
                 Assert.IsTrue(dataSource.Name == ds1Name);
                 Assert.IsTrue(dataSource.BankAccount == ds1BankAccount);
                 Assert.IsTrue(dataSource.Culture == ds1Culture);
-                int transactionCount = LoadTransactions(dataSource);
+                LoadTransactions(dataSource);
                 Assert.IsTrue(HasTransactions(dataSource));
-                Assert.IsTrue(transactionCount == 3);
-                transactionCount = LoadTransactions(dataSource);
-                Assert.IsTrue(transactionCount == 0);
-                IList<Transaction> transactions = GetAllTransactions(dataSource);
+                Assert.IsTrue(GetAllTransactions(dataSource).Count == 3);
+                LoadTransactions(dataSource);
+                var transactions = GetAllTransactions(dataSource);
                 Assert.IsTrue(transactions.Count == 3);
                 Assert.IsTrue(transactions[0].GetType() == typeof(Transaction));
                 Assert.IsTrue(TagTransaction(transactions.Last()));
@@ -184,7 +166,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
             finally
             {
-               DeleteClient();
+                DeleteClient();
             }
         }
     }

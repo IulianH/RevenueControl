@@ -11,7 +11,7 @@ namespace RevenueControl.Tests.DomainObjectsTests
         public void TransactionEquality()
         {
             // Arrange
-            Transaction transaction1 = new Transaction
+            var transaction1 = new Transaction
             {
                 Amount = 3,
                 OtherDetails = "Other details",
@@ -20,7 +20,7 @@ namespace RevenueControl.Tests.DomainObjectsTests
                 TransactionType = TransactionType.Credit
             };
 
-            Transaction transaction2 = new Transaction
+            var transaction2 = new Transaction
             {
                 Amount = 3,
                 OtherDetails = "Other details",
@@ -29,7 +29,7 @@ namespace RevenueControl.Tests.DomainObjectsTests
                 TransactionType = TransactionType.Credit
             };
 
-            Transaction transaction3 = new Transaction
+            var transaction3 = new Transaction
             {
                 Amount = 3,
                 OtherDetails = "other details",
@@ -39,16 +39,16 @@ namespace RevenueControl.Tests.DomainObjectsTests
             };
 
             // Act
-            bool oneVsOne1 = transaction1.Equals(transaction1);
-            bool oneVsOne2 = transaction1 == transaction1;
+            var oneVsOne1 = transaction1.Equals(transaction1);
+            var oneVsOne2 = transaction1 == transaction1;
 
-            bool oneVsTwo1 = transaction1.Equals(transaction2);
-            bool oneVsTwo2 = transaction1 == transaction2;
-        
+            var oneVsTwo1 = transaction1.Equals(transaction2);
+            var oneVsTwo2 = transaction1 == transaction2;
 
-            bool oneVsThree1 = transaction1.Equals(transaction3);
-            bool oneVsThree2 = transaction1 == transaction3;
-            bool oneVsThree3 = transaction1 != transaction3;
+
+            var oneVsThree1 = transaction1.Equals(transaction3);
+            var oneVsThree2 = transaction1 == transaction3;
+            var oneVsThree3 = transaction1 != transaction3;
 
             // Assert
             Assert.IsTrue(oneVsOne1);
@@ -58,9 +58,6 @@ namespace RevenueControl.Tests.DomainObjectsTests
             Assert.IsFalse(oneVsThree1);
             Assert.IsFalse(oneVsThree2);
             Assert.IsTrue(oneVsThree3);
-
         }
-
-
     }
 }

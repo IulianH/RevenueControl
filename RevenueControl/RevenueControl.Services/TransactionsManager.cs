@@ -1,104 +1,73 @@
-﻿using RevenueControl.DomainObjects;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using RevenueControl.DomainObjects;
 using RevenueControl.DomainObjects.Entities;
 using RevenueControl.DomainObjects.Exceptions;
 using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.Resource;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RevenueControl.Services
 {
     public class TransactionsManager : ITransactionManager
     {
-
-        private ITransactionFileReader fileReader;
-        IUnitOfWork unitOfWork;
+        private readonly ITransactionFileReader _fileReader;
+        private readonly IUnitOfWork _unitOfWork;
 
         public TransactionsManager(IUnitOfWork unitOfWork, ITransactionFileReader fileReader)
         {
-            this.unitOfWork = unitOfWork;
-            this.fileReader = fileReader;
+            this._unitOfWork = unitOfWork;
+            this._fileReader = fileReader;
         }
 
-        public TransactionsManager(IUnitOfWork unitOfWork) : this(unitOfWork, null) { }
-        
-
-        private void ValidateTransactionList(IList<Transaction> transactions, DataSource dataSource)
+        public TransactionsManager(IUnitOfWork unitOfWork) : this(unitOfWork, null)
         {
-            if (!transactions.Any())
-            {
-                throw new InvalidOperationException("A new data source must contain at least 1 transaction");
-            }
-
-
-            foreach (Transaction tr in transactions)
-            {
-                if (string.IsNullOrWhiteSpace(tr.TransactionDetails) || !GlobalConstants.MaxPeriod.Contains(tr.TransactionDate) || tr.Amount <= 0)
-                {
-                    throw new InvalidTransactionException();
-                }
-                tr.DataSourceId = dataSource.Id;
-            }
-        }
-
-        private DataSource GetDataSource(DataSource dataSource)
-        {
-            return unitOfWork.DataSourceRepository.GetById(dataSource.Id);
         }
 
 
-        public ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile, Period period)
+        public ActionResponse Insert(DataSource dataSource, string transactionReportFile, Period period)
         {
-            ParametrizedActionResponse<int> ret = new ParametrizedActionResponse<int>();
-            DataSource repoDataSource = GetDataSource(dataSource);
+            var ret = new ParametrizedActionResponse<int>();
+            var repoDataSource = GetDataSource(dataSource);
 
             if (repoDataSource != null)
             {
-                CultureInfo culture = new CultureInfo(repoDataSource.Culture);
-                IList<Transaction> transactionsFromFile;
-                if (period == GlobalConstants.MaxPeriod)
-                {
-                    transactionsFromFile = fileReader.Read(transactionReportFile, culture);
-                }
-                else
-                {
-                    transactionsFromFile = fileReader.Read(transactionReportFile, period, culture);
-                }
+                var culture = new CultureInfo(repoDataSource.Culture);
+                var transactionsFromFile = period == GlobalConstants.MaxPeriod
+                    ? _fileReader.Read(transactionReportFile, culture)
+                    : _fileReader.Read(transactionReportFile, period, culture);
 
                 //removing any duplicates
-                HashSet<Transaction> transactionHash = new HashSet<Transaction>();
-                foreach(Transaction transaction in transactionsFromFile)
+                var transactionHash = new HashSet<Transaction>();
+                foreach (var transaction in transactionsFromFile)
                 {
                     while (transactionHash.Contains(transaction))
-                    {
                         transaction.TransactionDate = transaction.TransactionDate.AddSeconds(1);
-                    }
                     transactionHash.Add(transaction);
                 }
-                
+
 
                 if (transactionsFromFile.Count > 0)
                 {
-                    Period selectedPeriod = new Period(transactionsFromFile[0].TransactionDate, transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
-                    IList<Transaction> dbTransactions = unitOfWork.TransactionRepository.Set.
-                        Where(t => t.DataSourceId == dataSource.Id && period.StartDate <= t.TransactionDate && t.TransactionDate <= period.EndDate).ToList();
-                    foreach (Transaction dbTransaction in dbTransactions)
-                    {
-                        if(transactionHash.Contains(dbTransaction))
-                        {
+                    var selectedPeriod = new Period(transactionsFromFile[0].TransactionDate,
+                        transactionsFromFile[transactionsFromFile.Count - 1].TransactionDate);
+                    IList<Transaction> dbTransactions = _unitOfWork.TransactionRepository.Set.
+                        Where(
+                            t =>
+                                (t.DataSourceId == dataSource.Id) && (period.StartDate <= t.TransactionDate) &&
+                                (t.TransactionDate <= period.EndDate)).ToList();
+                    foreach (var dbTransaction in dbTransactions)
+                        if (transactionHash.Contains(dbTransaction))
                             transactionHash.Remove(dbTransaction);
-                        }
-                    }
-                    foreach(Transaction transaction in transactionsFromFile.Where(transaction => transactionHash.Contains(transaction)))
+                    foreach (
+                        var transaction in
+                        transactionsFromFile.Where(transaction => transactionHash.Contains(transaction)))
                     {
                         transaction.DataSourceId = repoDataSource.Id;
-                        unitOfWork.TransactionRepository.Insert(transaction);
+                        _unitOfWork.TransactionRepository.Insert(transaction);
                     }
-                    unitOfWork.Save();
+                    _unitOfWork.Save();
                     ret.Result = transactionHash.Count;
                     ret.Status = ActionResponseCode.Success;
                 }
@@ -116,59 +85,90 @@ namespace RevenueControl.Services
             return ret;
         }
 
-        public ParametrizedActionResponse<int> Insert(DataSource dataSource, string transactionReportFile)
+        public ActionResponse Insert(DataSource dataSource, string transactionReportFile)
         {
             return Insert(dataSource, transactionReportFile, GlobalConstants.MaxPeriod);
         }
 
         public void Dispose()
         {
-            unitOfWork.Dispose();
+            _unitOfWork.Dispose();
         }
 
         public IList<Transaction> Get(DataSource dataSource, string searchTerm = null)
         {
-            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Set.Where(tr => tr.DataSourceId == dataSource.Id).ToList();
-            foreach(Transaction transaction in returnValue)
-            {
-                transaction.Tags = unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transaction.Id).Select(tag => tag.Tag).ToArray();           
-            }
+            IList<Transaction> returnValue =
+                _unitOfWork.TransactionRepository.Set.Where(tr => tr.DataSourceId == dataSource.Id).ToList();
+            foreach (var transaction in returnValue)
+                transaction.Tags =
+                    _unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transaction.Id)
+                        .Select(tag => tag.Tag)
+                        .ToArray();
             return returnValue;
         }
 
         public IList<Transaction> Get(DataSource dataSource, Period period, string searchTerm = null)
         {
-            IList<Transaction> returnValue = unitOfWork.TransactionRepository.Set.
-                Where(t => t.DataSourceId == dataSource.Id && period.StartDate >= t.TransactionDate && t.TransactionDate <= period.EndDate).ToArray();
+            IList<Transaction> returnValue = _unitOfWork.TransactionRepository.Set.
+                Where(
+                    t =>
+                        (t.DataSourceId == dataSource.Id) && (period.StartDate >= t.TransactionDate) &&
+                        (t.TransactionDate <= period.EndDate)).ToArray();
             return returnValue;
         }
 
         public ActionResponse TagTransaction(int transactionId, IList<string> tags)
         {
-            IList<string> existingTags = unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transactionId).Select(tag => tag.Tag.ToUpper()).ToArray();
-            IList<string> toAddTags = tags.Where(tag => !string.IsNullOrWhiteSpace(tag) && !existingTags.Contains(tag.ToUpper())).Select(tag => tag.Trim()).ToArray();
+            IList<string> existingTags =
+                _unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transactionId)
+                    .Select(tag => tag.Tag.ToUpper())
+                    .ToArray();
+            IList<string> toAddTags =
+                tags.Where(tag => !string.IsNullOrWhiteSpace(tag) && !existingTags.Contains(tag.ToUpper()))
+                    .Select(tag => tag.Trim())
+                    .ToArray();
             if (toAddTags.Count > 0)
-            { 
-                DataSource dataSource = unitOfWork.DataSourceRepository.GetById(unitOfWork.TransactionRepository.GetById(transactionId).DataSourceId);
-                foreach(string tag in toAddTags)
-                {
-                    unitOfWork.TransactionTagRepository.Insert
-                        (
+            {
+                var dataSource =
+                    _unitOfWork.DataSourceRepository.GetById(
+                        _unitOfWork.TransactionRepository.GetById(transactionId).DataSourceId);
+                foreach (var tag in toAddTags)
+                    _unitOfWork.TransactionTagRepository.Insert
+                    (
                         new TransactionTag
                         {
                             ClientName = dataSource.ClientName,
                             Tag = tag,
                             TransactionId = transactionId
                         }
-                        );
-                }
-                unitOfWork.Save();
+                    );
+                _unitOfWork.Save();
             }
             return new ActionResponse
             {
                 Status = ActionResponseCode.Success
             };
+        }
 
+
+        private void ValidateTransactionList(IList<Transaction> transactions, DataSource dataSource)
+        {
+            if (!transactions.Any())
+                throw new InvalidOperationException("A new data source must contain at least 1 transaction");
+
+
+            foreach (var tr in transactions)
+            {
+                if (string.IsNullOrWhiteSpace(tr.TransactionDetails) ||
+                    !GlobalConstants.MaxPeriod.Contains(tr.TransactionDate) || (tr.Amount <= 0))
+                    throw new InvalidTransactionException();
+                tr.DataSourceId = dataSource.Id;
+            }
+        }
+
+        private DataSource GetDataSource(DataSource dataSource)
+        {
+            return _unitOfWork.DataSourceRepository.GetById(dataSource.Id);
         }
     }
 }

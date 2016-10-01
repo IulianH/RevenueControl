@@ -88,6 +88,33 @@ namespace RevenueControl.Resource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Operation failed. If the error perssists please contact the system administrator..
+        /// </summary>
+        public static string GenericError {
+            get {
+                return ResourceManager.GetString("GenericError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation failed. Please write down the error code {0}. If the error perssists please contact the system administrator..
+        /// </summary>
+        public static string GenericErrorWithErrorCode {
+            get {
+                return ResourceManager.GetString("GenericErrorWithErrorCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Completed sucessfully.
+        /// </summary>
+        public static string GenericSuccess {
+            get {
+                return ResourceManager.GetString("GenericSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transaction Details.
         /// </summary>
         public static string TransactionDetails {
@@ -97,11 +124,20 @@ namespace RevenueControl.Resource {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} transactions added.
+        ///   Looks up a localized string similar to {0} transactions successfully added.
         /// </summary>
         public static string TransactionsAdded {
             get {
                 return ResourceManager.GetString("TransactionsAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} transactions successfully added, {1} transactions already existed in the database.
+        /// </summary>
+        public static string TransactionsAddedWithWarnings {
+            get {
+                return ResourceManager.GetString("TransactionsAddedWithWarnings", resourceCulture);
             }
         }
         

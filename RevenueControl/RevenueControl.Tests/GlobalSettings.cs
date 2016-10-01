@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RevenueControl.Tests
 {
@@ -12,10 +7,10 @@ namespace RevenueControl.Tests
     {
         public static string GetResourceFilePath(string resourceFile)
         {
-            string currentAssemblyDirectoryName = Path.GetDirectoryName(
-                                            Assembly.GetExecutingAssembly()
-                                                    .Location
-                                            );
+            var currentAssemblyDirectoryName = Path.GetDirectoryName(
+                Assembly.GetExecutingAssembly()
+                    .Location
+            );
             return Path.Combine(currentAssemblyDirectoryName, "Resources", resourceFile);
         }
     }

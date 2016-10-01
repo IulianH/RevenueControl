@@ -1,5 +1,5 @@
-﻿using RevenueControl.DomainObjects.Entities;
-using System;
+﻿using System;
+using RevenueControl.DomainObjects.Entities;
 
 namespace RevenueControl.DomainObjects.Interfaces
 {

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RevenueControl.InquiryFileReaders
+﻿namespace RevenueControl.InquiryFileReaders
 {
     public enum Bank
     {
-        ING
+        Ing
     }
 }

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RevenueControl.DomainObjects.Interfaces
+﻿namespace RevenueControl.DomainObjects.Interfaces
 {
-    public interface IService<T>
+    public interface IService<in T>
     {
         ActionResponse Insert(T item);
 

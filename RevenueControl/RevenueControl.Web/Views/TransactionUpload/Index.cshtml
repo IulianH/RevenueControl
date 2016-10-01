@@ -1,18 +1,21 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
 
 @if (TempData["Success"] != null)
-{ <span class="successMessage">@TempData["Success"]</span> }
+{
+    <span class="successMessage">@TempData["Success"]</span>
+}
 
 @if (TempData["Error"] != null)
-{ <span class="errorMessage">@TempData["Error"]</span> }
+{
+    <span class="errorMessage">@TempData["Error"]</span>
+}
 
-@using (Html.BeginForm("Upload", "TransactionUpload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Upload", "TransactionUpload", FormMethod.Post, new {enctype = "multipart/form-data"}))
 {
     @Html.AntiForgeryToken()
     @Html.Hidden("Id")
-    <input type="file" name="file" />
-    <input type="submit" name="Submit" id="Submit" value="Upload" />
+    <input type="file" name="file"/>
+    <input type="submit" name="Submit" id="Submit" value="Upload"/>
 }

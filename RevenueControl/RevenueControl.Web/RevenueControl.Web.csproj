@@ -198,6 +198,7 @@
     <Compile Include="Context\IRevenueControlContext.cs" />
     <Compile Include="Context\RevenueControlContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\DataSourcesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -314,10 +315,17 @@
       <Project>{bdac342b-97d7-4de3-baf4-e9741b1a2d15}</Project>
       <Name>RevenueControl.InquiryFileReaders</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RevenueControl.Resources\RevenueControl.Resource.csproj">
+      <Project>{4703c16b-10fd-49bc-9d46-2f33eaaccf03}</Project>
+      <Name>RevenueControl.Resource</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RevenueControl.Services\RevenueControl.Services.csproj">
       <Project>{d7453f7e-ddc6-4300-b999-0136505cff36}</Project>
       <Name>RevenueControl.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

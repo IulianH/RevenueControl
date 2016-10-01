@@ -1,30 +1,24 @@
-﻿using RevenueControl.DomainObjects.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using RevenueControl.DomainObjects.Entities;
+using RevenueControl.DomainObjects.Interfaces;
 
 namespace RevenueControl.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {
-        RevenueControlDb context = new RevenueControlDb();
-        IRepository<Client> clientRepository;
-        IRepository<DataSource> dataSourceRepository;
-        IRepository<Transaction> transactionRepository;
-        IRepository<TransactionTag> transactionTagRepository;
+        private IRepository<Client> clientRepository;
+        private readonly RevenueControlDb context = new RevenueControlDb();
+        private IRepository<DataSource> dataSourceRepository;
+        private IRepository<Transaction> transactionRepository;
+        private IRepository<TransactionTag> transactionTagRepository;
 
 
         public IRepository<Client> ClientRepository
         {
             get
             {
-                if(clientRepository == null)
-                {
+                if (clientRepository == null)
                     clientRepository = new Repository<Client>(context);
-                }
                 return clientRepository;
             }
         }
@@ -33,10 +27,8 @@ namespace RevenueControl.DataAccess
         {
             get
             {
-                if(dataSourceRepository == null)
-                {
+                if (dataSourceRepository == null)
                     dataSourceRepository = new Repository<DataSource>(context);
-                }
                 return dataSourceRepository;
             }
         }
@@ -45,10 +37,8 @@ namespace RevenueControl.DataAccess
         {
             get
             {
-                if(transactionRepository == null)
-                {
+                if (transactionRepository == null)
                     transactionRepository = new Repository<Transaction>(context);
-                }
                 return transactionRepository;
             }
         }
@@ -57,10 +47,8 @@ namespace RevenueControl.DataAccess
         {
             get
             {
-                if(transactionTagRepository == null)
-                {
+                if (transactionTagRepository == null)
                     transactionTagRepository = new Repository<TransactionTag>(context);
-                }
                 return transactionTagRepository;
             }
         }
@@ -72,17 +60,15 @@ namespace RevenueControl.DataAccess
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+
+        private bool disposedValue; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
                     context.Dispose();
-                }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
@@ -105,6 +91,7 @@ namespace RevenueControl.DataAccess
             // TODO: uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
         }
+
         #endregion
     }
 }

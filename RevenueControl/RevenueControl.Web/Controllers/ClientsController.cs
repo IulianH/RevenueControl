@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
+﻿using System.Net;
 using System.Web.Mvc;
 using RevenueControl.DataAccess;
 using RevenueControl.DomainObjects.Entities;
@@ -17,7 +11,7 @@ namespace RevenueControl.Web.Controllers
     {
         private RevenueControlDb db = new RevenueControlDb();
 
-        IClientManager manager = new ClientManager(new UnitOfWork());
+        private readonly IClientManager manager = new ClientManager(new UnitOfWork());
 
         // GET: Clients
         public ActionResult Index()
@@ -29,15 +23,11 @@ namespace RevenueControl.Web.Controllers
         public ActionResult Details(string id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            
-            Client client = manager.GetById(id);
+
+            var client = manager.GetById(id);
             if (client == null)
-            {
                 return HttpNotFound();
-            }
             return View(client);
         }
 
@@ -67,14 +57,10 @@ namespace RevenueControl.Web.Controllers
         public ActionResult Edit(string id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Client client = manager.GetById(id);
+            var client = manager.GetById(id);
             if (client == null)
-            {
                 return HttpNotFound();
-            }
             return View(client);
         }
 
@@ -97,23 +83,20 @@ namespace RevenueControl.Web.Controllers
         public ActionResult Delete(string id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Client client = manager.GetById(id);
+            var client = manager.GetById(id);
             if (client == null)
-            {
                 return HttpNotFound();
-            }
             return View(client);
         }
 
         // POST: Clients/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Client client = manager.GetById(id);
+            var client = manager.GetById(id);
             manager.Delete(client);
             return RedirectToAction("Index");
         }
@@ -121,9 +104,7 @@ namespace RevenueControl.Web.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 manager.Dispose();
-            }
             base.Dispose(disposing);
         }
     }

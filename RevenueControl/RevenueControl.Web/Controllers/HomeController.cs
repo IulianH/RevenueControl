@@ -1,21 +1,15 @@
-﻿using RevenueControl.DataAccess;
+﻿using System.Web.Mvc;
+using RevenueControl.DataAccess;
 using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using RevenueControl.DomainObjects.Entities;
 using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
     public class HomeController : Controller
     {
-
-        IDataSourceManager _repo = new DataSourceManager(new UnitOfWork());
-        IRevenueControlContext Context = new RevenueControlContext();
+        private readonly IDataSourceManager _repo = new DataSourceManager(new UnitOfWork());
+        private readonly IRevenueControlContext Context = new RevenueControlContext();
 
         public ActionResult Index(string searchTerm = null)
         {

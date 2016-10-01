@@ -1,8 +1,5 @@
-﻿using RevenueControl.DomainObjects.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using RevenueControl.DomainObjects.Entities;
 
 namespace RevenueControl.Web.Models
 {

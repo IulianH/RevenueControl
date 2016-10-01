@@ -1,7 +1,9 @@
 ﻿using Microsoft.Owin;
 using Owin;
+using RevenueControl.Web;
 
-[assembly: OwinStartupAttribute(typeof(RevenueControl.Web.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
+
 namespace RevenueControl.Web
 {
     public partial class Startup

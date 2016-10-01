@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
+﻿using System.Net;
 using System.Web.Mvc;
 using RevenueControl.DataAccess;
 using RevenueControl.DomainObjects.Entities;
@@ -16,9 +10,9 @@ namespace RevenueControl.Web.Controllers
 {
     public class DataSourcesController : Controller
     {
-       
-        private IDataSourceManager manager = new DataSourceManager(new UnitOfWork());
-        private IRevenueControlContext Context = new RevenueControlContext();
+        private readonly IRevenueControlContext Context = new RevenueControlContext();
+
+        private readonly IDataSourceManager manager = new DataSourceManager(new UnitOfWork());
 
         // GET: DataSources
         public ActionResult Index()
@@ -53,14 +47,10 @@ namespace RevenueControl.Web.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            DataSource dataSource = manager.GetById(id.Value, Context.LoggedInClient);
+            var dataSource = manager.GetById(id.Value, Context.LoggedInClient);
             if (dataSource == null)
-            {
                 return HttpNotFound();
-            }
             return View(dataSource);
         }
 
@@ -84,33 +74,28 @@ namespace RevenueControl.Web.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            DataSource dataSource = manager.GetById(id.Value, Context.LoggedInClient);
+            var dataSource = manager.GetById(id.Value, Context.LoggedInClient);
             if (dataSource == null)
-            {
                 return HttpNotFound();
-            }
             return View(dataSource);
         }
 
         // POST: DataSources/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            DataSource dataSource = manager.GetById(id, Context.LoggedInClient);
-            manager.Delete(dataSource); 
+            var dataSource = manager.GetById(id, Context.LoggedInClient);
+            manager.Delete(dataSource);
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 manager.Dispose();
-            }
             base.Dispose(disposing);
         }
     }

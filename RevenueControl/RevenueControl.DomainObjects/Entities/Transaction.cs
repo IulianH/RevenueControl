@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RevenueControl.DomainObjects.Entities
 {
@@ -13,7 +10,7 @@ namespace RevenueControl.DomainObjects.Entities
         Credit
     }
 
-    public class Transaction 
+    public class Transaction
     {
         public int Id { get; set; }
 
@@ -22,7 +19,7 @@ namespace RevenueControl.DomainObjects.Entities
         public string TransactionDetails { get; set; }
 
         public decimal Amount { get; set; }
-        
+
         public TransactionType TransactionType { get; set; }
 
         public string OtherDetails { get; set; }
@@ -35,46 +32,32 @@ namespace RevenueControl.DomainObjects.Entities
 
         private bool Equals(Transaction other)
         {
-            return TransactionDate == other.TransactionDate 
-                && (TransactionDetails ?? string.Empty) == (other.TransactionDetails ?? string.Empty) 
-                && Amount == other.Amount 
-                && TransactionType == other.TransactionType 
-                && (OtherDetails ?? string.Empty) == (other.OtherDetails ?? string.Empty);
+            return (TransactionDate == other.TransactionDate)
+                   && ((TransactionDetails ?? string.Empty) == (other.TransactionDetails ?? string.Empty))
+                   && (Amount == other.Amount)
+                   && (TransactionType == other.TransactionType)
+                   && ((OtherDetails ?? string.Empty) == (other.OtherDetails ?? string.Empty));
         }
 
         public static bool operator ==(Transaction a, Transaction b)
         {
             // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b))
-            {
+            if (ReferenceEquals(a, b))
                 return true;
-            }
 
             // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
-            {
+            if (((object) a == null) || ((object) b == null))
                 return false;
-            }
-            return a.Equals(b);            
+            return a.Equals(b);
         }
 
         public override bool Equals(object obj)
         {
-
-            if(obj == null)
-            {
-                return false; 
-            }
-
             // If parameter cannot be cast to Point return false.
-            Transaction p = obj as Transaction;
-            if ((System.Object)p == null)
-            {
-                return false;
-            }
+            var p = obj as Transaction;
+            return ((object) p != null) && Equals(p);
 
             // Return true if the fields match:
-            return Equals(p);
         }
 
         public static bool operator !=(Transaction a, Transaction b)
@@ -82,11 +65,13 @@ namespace RevenueControl.DomainObjects.Entities
             return !(a == b);
         }
 
-   
+
         public override int GetHashCode()
         {
             //do not store the hashcode in a variable, it must be dynamic
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}{4}", this.TransactionDate.Year, TransactionDate.Month, TransactionDate.Day, TransactionDetails, Amount).GetHashCode();
+            return
+                string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}{4}", TransactionDate.Year,
+                    TransactionDate.Month, TransactionDate.Day, TransactionDetails, Amount).GetHashCode();
         }
     }
 }
