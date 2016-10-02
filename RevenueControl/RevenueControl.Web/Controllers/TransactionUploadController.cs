@@ -8,6 +8,7 @@ using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
+    [Authorize]
     public class TransactionUploadController : BaseController
     {
         private readonly IDataSourceManager _dataSourceManager = new DataSourceManager(new UnitOfWork());
@@ -23,6 +24,7 @@ namespace RevenueControl.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Upload([Bind(Prefix = "id")] int dataSourceId)
         {
             if (Request.Files.Count > 0)

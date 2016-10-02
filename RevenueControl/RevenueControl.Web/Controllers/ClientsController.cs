@@ -7,6 +7,7 @@ using RevenueControl.Services;
 
 namespace RevenueControl.Web.Controllers
 {
+    [Authorize]
     public class ClientsController : Controller
     {
         private RevenueControlDb db = new RevenueControlDb();

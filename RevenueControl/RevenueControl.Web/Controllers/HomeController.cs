@@ -6,6 +6,7 @@ using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IDataSourceManager _repo = new DataSourceManager(new UnitOfWork());

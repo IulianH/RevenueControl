@@ -8,6 +8,7 @@ using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
+    [Authorize]
     public class DataSourcesController : BaseController
     {
 

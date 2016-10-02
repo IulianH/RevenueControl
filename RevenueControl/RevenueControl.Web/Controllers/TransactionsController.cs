@@ -9,6 +9,7 @@ using RevenueControl.Web.Models;
 
 namespace RevenueControl.Web.Controllers
 {
+    [Authorize]
     public class TransactionsController : BaseController
     {
         private readonly IRevenueControlContext Context = new RevenueControlContext();
