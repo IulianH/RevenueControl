@@ -10,9 +10,8 @@ namespace RevenueControl.Web.Controllers
     [Authorize]
     public class ClientsController : Controller
     {
-        private RevenueControlDb db = new RevenueControlDb();
-
         private readonly IClientManager manager = new ClientManager(new UnitOfWork());
+        private RevenueControlDb db = new RevenueControlDb();
 
         // GET: Clients
         public ActionResult Index()

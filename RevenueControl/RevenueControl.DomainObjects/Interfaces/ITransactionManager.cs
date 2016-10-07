@@ -17,7 +17,5 @@ namespace RevenueControl.DomainObjects.Interfaces
         IList<Transaction> GetAll(DataSource dataSource, string searchTerm = null);
 
         IList<Transaction> GetAll(DataSource dataSource, Period period, string searchTerm = null);
-
-        ActionResponse TagTransaction(int transactionId, IList<string> tags);
     }
 }

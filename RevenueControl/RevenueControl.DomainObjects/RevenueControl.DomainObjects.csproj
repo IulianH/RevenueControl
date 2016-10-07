@@ -45,7 +45,6 @@
     <Compile Include="Entities\DataSource.cs" />
     <Compile Include="Entities\Period.cs" />
     <Compile Include="Entities\Transaction.cs" />
-    <Compile Include="Entities\TransactionTag.cs" />
     <Compile Include="Exceptions\InvalidTransactionException.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="Interfaces\IClientManager.cs" />

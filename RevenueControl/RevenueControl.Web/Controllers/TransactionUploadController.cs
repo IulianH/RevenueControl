@@ -4,7 +4,6 @@ using RevenueControl.DataAccess;
 using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.InquiryFileReaders.Csv;
 using RevenueControl.Services;
-using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
@@ -12,6 +11,7 @@ namespace RevenueControl.Web.Controllers
     public class TransactionUploadController : BaseController
     {
         private readonly IDataSourceManager _dataSourceManager = new DataSourceManager(new UnitOfWork());
+
         private readonly ITransactionManager _transactionManager = new TransactionsManager(new UnitOfWork(),
             new GenericCsvReader());
 

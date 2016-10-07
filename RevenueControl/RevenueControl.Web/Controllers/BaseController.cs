@@ -46,7 +46,5 @@ namespace RevenueControl.Web.Controllers
                 ClientName = _context.LoggedInClient
             };
         }
-
-
     }
 }

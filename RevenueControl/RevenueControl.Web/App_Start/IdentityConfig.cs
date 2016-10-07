@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using RevenueControl.DomainObjects.Entities;
 using RevenueControl.Web.Models;
 
 namespace RevenueControl.Web
@@ -39,7 +40,7 @@ namespace RevenueControl.Web
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options,
             IOwinContext context)
         {
-            var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
+            var manager = new ApplicationUserManager(new RevenueControlUserStore(context.Get<ApplicationDbContext>()));
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
@@ -100,6 +101,30 @@ namespace RevenueControl.Web
             IOwinContext context)
         {
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
+        }
+    }
+
+    public class RevenueControlUserStore : UserStore<ApplicationUser>
+    {
+        private readonly ApplicationDbContext _dbContext;
+
+        public RevenueControlUserStore(ApplicationDbContext dbContext) : base(dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public override Task CreateAsync(ApplicationUser user)
+        {
+            if (user.ClientName == null)
+            {
+                user.ClientName = user.UserName;
+                var client = new Client
+                {
+                    Name = user.ClientName
+                };
+                _dbContext.Clients.Add(client);
+            }
+            return base.CreateAsync(user);
         }
     }
 }

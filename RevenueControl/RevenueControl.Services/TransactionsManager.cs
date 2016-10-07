@@ -17,8 +17,8 @@ namespace RevenueControl.Services
 
         public TransactionsManager(IUnitOfWork unitOfWork, ITransactionFileReader fileReader)
         {
-            this._unitOfWork = unitOfWork;
-            this._fileReader = fileReader;
+            _unitOfWork = unitOfWork;
+            _fileReader = fileReader;
         }
 
         public TransactionsManager(IUnitOfWork unitOfWork) : this(unitOfWork, null)
@@ -99,11 +99,6 @@ namespace RevenueControl.Services
         {
             IList<Transaction> returnValue =
                 _unitOfWork.TransactionRepository.Set.Where(tr => tr.DataSourceId == dataSource.Id).ToList();
-            foreach (var transaction in returnValue)
-                transaction.Tags =
-                    _unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transaction.Id)
-                        .Select(tag => tag.Tag)
-                        .ToArray();
             return returnValue;
         }
 
@@ -126,40 +121,6 @@ namespace RevenueControl.Services
         {
             throw new NotImplementedException();
         }
-
-        public ActionResponse TagTransaction(int transactionId, IList<string> tags)
-        {
-            IList<string> existingTags =
-                _unitOfWork.TransactionTagRepository.Set.Where(tag => tag.TransactionId == transactionId)
-                    .Select(tag => tag.Tag.ToUpper())
-                    .ToArray();
-            IList<string> toAddTags =
-                tags.Where(tag => !string.IsNullOrWhiteSpace(tag) && !existingTags.Contains(tag.ToUpper()))
-                    .Select(tag => tag.Trim())
-                    .ToArray();
-            if (toAddTags.Count > 0)
-            {
-                var dataSource =
-                    _unitOfWork.DataSourceRepository.GetById(
-                        _unitOfWork.TransactionRepository.GetById(transactionId).DataSourceId);
-                foreach (var tag in toAddTags)
-                    _unitOfWork.TransactionTagRepository.Insert
-                    (
-                        new TransactionTag
-                        {
-                            ClientName = dataSource.ClientName,
-                            Tag = tag,
-                            TransactionId = transactionId
-                        }
-                    );
-                _unitOfWork.Save();
-            }
-            return new ActionResponse
-            {
-                Status = ActionResponseCode.Success
-            };
-        }
-
 
         private void ValidateTransactionList(IList<Transaction> transactions, DataSource dataSource)
         {

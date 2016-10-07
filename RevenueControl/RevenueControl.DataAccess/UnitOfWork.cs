@@ -6,20 +6,20 @@ namespace RevenueControl.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private IRepository<Client> clientRepository;
-        private readonly RevenueControlDb context = new RevenueControlDb();
-        private IRepository<DataSource> dataSourceRepository;
-        private IRepository<Transaction> transactionRepository;
-        private IRepository<TransactionTag> transactionTagRepository;
+        private readonly RevenueControlDb _context = new RevenueControlDb();
+        private IRepository<Client> _clientRepository;
+        private IRepository<DataSource> _dataSourceRepository;
+        private IRepository<Transaction> _transactionRepository;
+       
 
 
         public IRepository<Client> ClientRepository
         {
             get
             {
-                if (clientRepository == null)
-                    clientRepository = new Repository<Client>(context);
-                return clientRepository;
+                if (_clientRepository == null)
+                    _clientRepository = new Repository<Client>(_context);
+                return _clientRepository;
             }
         }
 
@@ -27,9 +27,9 @@ namespace RevenueControl.DataAccess
         {
             get
             {
-                if (dataSourceRepository == null)
-                    dataSourceRepository = new Repository<DataSource>(context);
-                return dataSourceRepository;
+                if (_dataSourceRepository == null)
+                    _dataSourceRepository = new Repository<DataSource>(_context);
+                return _dataSourceRepository;
             }
         }
 
@@ -37,26 +37,15 @@ namespace RevenueControl.DataAccess
         {
             get
             {
-                if (transactionRepository == null)
-                    transactionRepository = new Repository<Transaction>(context);
-                return transactionRepository;
+                if (_transactionRepository == null)
+                    _transactionRepository = new Repository<Transaction>(_context);
+                return _transactionRepository;
             }
         }
-
-        public IRepository<TransactionTag> TransactionTagRepository
-        {
-            get
-            {
-                if (transactionTagRepository == null)
-                    transactionTagRepository = new Repository<TransactionTag>(context);
-                return transactionTagRepository;
-            }
-        }
-
 
         public void Save()
         {
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         #region IDisposable Support
@@ -68,7 +57,7 @@ namespace RevenueControl.DataAccess
             if (!disposedValue)
             {
                 if (disposing)
-                    context.Dispose();
+                    _context.Dispose();
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.

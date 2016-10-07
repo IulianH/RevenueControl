@@ -14,7 +14,7 @@ namespace RevenueControl.Services
 
         public DataSourceManager(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public ActionResponse Insert(DataSource dataSource)
@@ -27,8 +27,9 @@ namespace RevenueControl.Services
                 if (!string.IsNullOrWhiteSpace(dataSource.Name))
                     dataSource.Name = dataSource.Name.Trim();
                 if (
-                    _unitOfWork.DataSourceRepository.Set.SingleOrDefault(ds => (ds.ClientName == dataSource.ClientName) &&
-                            (ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper())) == null)
+                    _unitOfWork.DataSourceRepository.Set.SingleOrDefault(
+                        ds => (ds.ClientName == dataSource.ClientName) &&
+                              (ds.BankAccount.ToUpper() == dataSource.BankAccount.ToUpper())) == null)
                 {
                     _unitOfWork.DataSourceRepository.Insert(dataSource);
                     _unitOfWork.Save();

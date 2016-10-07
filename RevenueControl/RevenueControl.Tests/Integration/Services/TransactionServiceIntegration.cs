@@ -89,13 +89,7 @@ namespace RevenueControl.Tests.Integration.Services
             }
         }
 
-        private bool TagTransaction(Transaction transaction)
-        {
-            using (ITransactionManager trManager = new TransactionsManager(new UnitOfWork(), null))
-            {
-                return trManager.TagTransaction(transaction.Id, Tags).Status == ActionResponseCode.Success;
-            }
-        }
+       
 
         private IList<DataSource> SearchDataSource(string searchTerm)
         {
@@ -159,10 +153,7 @@ namespace RevenueControl.Tests.Integration.Services
                 var transactions = GetAllTransactions(dataSource);
                 Assert.IsTrue(transactions.Count == 3);
                 Assert.IsTrue(transactions[0].GetType() == typeof(Transaction));
-                Assert.IsTrue(TagTransaction(transactions.Last()));
                 transactions = GetAllTransactions(dataSource);
-                Assert.IsTrue(transactions.Last().Tags.Count == 2);
-                Assert.IsTrue(transactions.First().Tags.Count == 0);
             }
             finally
             {

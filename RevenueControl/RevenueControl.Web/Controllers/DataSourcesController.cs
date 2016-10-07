@@ -4,14 +4,12 @@ using RevenueControl.DataAccess;
 using RevenueControl.DomainObjects.Entities;
 using RevenueControl.DomainObjects.Interfaces;
 using RevenueControl.Services;
-using RevenueControl.Web.Context;
 
 namespace RevenueControl.Web.Controllers
 {
     [Authorize]
     public class DataSourcesController : BaseController
     {
-
         private readonly IDataSourceManager manager = new DataSourceManager(new UnitOfWork());
 
         // GET: DataSources

@@ -15,7 +15,5 @@ namespace RevenueControl.DataAccess
         public DbSet<DataSource> DataSources { get; set; }
 
         public DbSet<Transaction> Transactions { get; set; }
-
-        public DbSet<TransactionTag> TransactionTags { get; set; }
     }
 }

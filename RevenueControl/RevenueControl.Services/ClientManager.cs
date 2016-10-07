@@ -12,7 +12,7 @@ namespace RevenueControl.Services
 
         public ClientManager(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public void Dispose()
@@ -104,7 +104,8 @@ namespace RevenueControl.Services
 
         private static bool ValidateClient(Client client)
         {
-            var returnValue = !string.IsNullOrWhiteSpace(client.Name) && client.Name.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c));
+            var returnValue = !string.IsNullOrWhiteSpace(client.Name) &&
+                              client.Name.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c));
             return returnValue;
         }
     }

@@ -102,7 +102,8 @@ namespace RevenueControl.InquiryFileReaders.Csv
         }
 
 
-        private static HybridDictionary CreateColumnMaps(ICsvReader reader, CultureInfo culture, out FailReason failReson)
+        private static HybridDictionary CreateColumnMaps(ICsvReader reader, CultureInfo culture,
+            out FailReason failReson)
         {
             HybridDictionary returnVal = null;
             failReson = FailReason.None;
@@ -161,12 +162,12 @@ namespace RevenueControl.InquiryFileReaders.Csv
             //validation
             if (lines.All(line => line.Date == string.Empty) ||
                 lines.Any(line => line.TransactionDetails == string.Empty) || (lines.Count(
-                                                                                    line =>
-                                                                                        (line.Date != string.Empty) &&
-                                                                                        ((line.DebitValue !=
-                                                                                          string.Empty) ||
-                                                                                         (line.CreditValue !=
-                                                                                          string.Empty))) != 1))
+                                                                                   line =>
+                                                                                       (line.Date != string.Empty) &&
+                                                                                       ((line.DebitValue !=
+                                                                                         string.Empty) ||
+                                                                                        (line.CreditValue !=
+                                                                                         string.Empty))) != 1))
                 return null;
             var mainLine = lines[0];
             if ((mainLine.DebitValue != string.Empty) ||

@@ -17,9 +17,7 @@ namespace RevenueControl.Web.Controllers
             var model = _repo.Get(Context.LoggedInClient, searchTerm);
 
             if (Request.IsAjaxRequest())
-            {
                 return PartialView("_DataSources", model);
-            }
 
             return View(model);
         }
