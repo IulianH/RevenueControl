@@ -6,7 +6,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using RevenueControl.DomainObjects.Entities;
 using RevenueControl.Web.Models;
 
 namespace RevenueControl.Web
@@ -115,7 +114,7 @@ namespace RevenueControl.Web
 
         public override Task CreateAsync(ApplicationUser user)
         {
-            if (user.ClientName == null)
+            /*if (user.ClientName == null)
             {
                 user.ClientName = user.UserName;
                 var client = new Client
@@ -123,7 +122,22 @@ namespace RevenueControl.Web
                     Name = user.ClientName
                 };
                 _dbContext.Clients.Add(client);
-            }
+            }*/
+
+            var client = new Client
+            {
+                Name = user.UserName
+            };
+            _dbContext.Clients.Add(client);
+
+            var permission = new UserClientPermission
+            {
+                Client = client,
+                User = user
+            };
+
+            _dbContext.UserClientPermissions.Add(permission);
+
             return base.CreateAsync(user);
         }
     }

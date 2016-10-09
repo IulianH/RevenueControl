@@ -16,9 +16,6 @@
         <th>
             @Html.DisplayNameFor(model => model.OtherDetails)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Tags)
-        </th>
         <th></th>
     </tr>
 
@@ -39,11 +36,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OtherDetails)
-            </td>
-            <td>
-                @foreach (var tag in item.Tags)
-                {
-                }
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {id = item.Id}) |

@@ -15,7 +15,7 @@ namespace RevenueControl.Web.Controllers
         // GET: DataSources
         public ActionResult Index()
         {
-            return View(manager.Get(_context.LoggedInClient));
+            return View(manager.Get(Client));
         }
 
         // GET: DataSources/Create
@@ -33,7 +33,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                dataSource.ClientName = _context.LoggedInClient;
+                dataSource.ClientName = Client;
                 manager.Insert(dataSource);
                 return RedirectToAction("Index");
             }
@@ -46,7 +46,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var dataSource = manager.GetById(id.Value, _context.LoggedInClient);
+            var dataSource = manager.GetById(id.Value, Client);
             if (dataSource == null)
                 return HttpNotFound();
             return View(dataSource);
@@ -61,7 +61,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                dataSource.ClientName = _context.LoggedInClient;
+                dataSource.ClientName = Client;
                 manager.Update(dataSource);
                 return RedirectToAction("Index");
             }
@@ -73,7 +73,7 @@ namespace RevenueControl.Web.Controllers
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var dataSource = manager.GetById(id.Value, _context.LoggedInClient);
+            var dataSource = manager.GetById(id.Value, Client);
             if (dataSource == null)
                 return HttpNotFound();
             return View(dataSource);
@@ -85,7 +85,7 @@ namespace RevenueControl.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var dataSource = manager.GetById(id, _context.LoggedInClient);
+            var dataSource = manager.GetById(id, Client);
             manager.Delete(dataSource);
             return RedirectToAction("Index");
         }

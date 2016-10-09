@@ -36,7 +36,7 @@ namespace RevenueControl.Web.Controllers
                     var fileName = Path.GetFileName(file.FileName);
                     var path = Path.Combine(Server.MapPath("~/UploadedContent/"), fileName);
                     file.SaveAs(path);
-                    var dataSource = _dataSourceManager.GetById(dataSourceId, _context.LoggedInClient);
+                    var dataSource = _dataSourceManager.GetById(dataSourceId, Client);
                     var response = _transactionManager.Insert(dataSource, path);
                     HandleResponse(response);
                 }

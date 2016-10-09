@@ -18,7 +18,7 @@ namespace RevenueControl.Tests.Integration.Services
         private const string ds1BankAccount = "RO75SMB0000999901728781";
         private const string ds1Culture = "ro-RO";
         private const string ds1Name = "Cont Curent";
-        private readonly string[] Tags = {"Tag1", "Tag2"};
+        
 
         private static DataSource Ds1 => new DataSource
         {
